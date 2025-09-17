@@ -1,0 +1,34 @@
+baseURL = "https://404not.work"  # 稍后替换成你的真实域名
+languageCode = 'zh-cn'
+title = '你的博客标题'
+theme = 'stack' # 核心：指定使用stack主题
+
+
+
+# 定义网站菜单
+[menu]
+  [[menu.main]]
+    name = "首页"
+    url = "/"
+    weight = 1
+
+  [[menu.main]]
+    name = "文章"
+    url = "/posts/"
+    weight = 2
+
+  [[menu.main]]
+    name = "关于"
+    url = "/about/"
+    weight = 3
+
+# 配置搜索引擎设置（非常重要！）
+[services.googleAnalytics]
+  ID = 'G-XXXXXXXXXX' # 如果你有Google Analytics 4的测量ID，可以填在这里
+
+[markup]
+  [markup.highlight]
+    style = 'github' # 代码高亮风格
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true # 允许在markdown中使用HTML
