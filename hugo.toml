@@ -1,6 +1,6 @@
-baseURL = "https://404not.work"  # 稍后替换成你的真实域名
+baseURL = "https://404not.work"
 languageCode = 'zh-cn'
-title = '你的博客标题'
+title = 'LiangYu's Blog'
 theme = 'stack' # 核心：指定使用stack主题
 
 
