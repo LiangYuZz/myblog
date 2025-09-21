@@ -34,4 +34,4 @@ theme = 'stack'
       unsafe = true # 允许在markdown中使用HTML
 [params]
   [params.sidebar]
-    avatar = "img/avatar.jpg"   // 相对于 assets/ 的路径，前面不要 “/”
+    avatar = "img/avatar.jpg"
