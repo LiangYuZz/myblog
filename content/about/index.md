@@ -14,7 +14,10 @@ description: "一个ZQU的大学生，啥语言都会，啥语言都不精通"
 Welcome to my blog!!!
 
 ***just A University student***
-我的俩个Github账号，也许会有一些有意思的项目发布在上面
-至于为什么是俩个账号，是因为之前有***学生活动***，多个账号都可以享受
+
+
+这是我的俩个Github账号，也许会有一些有意思的项目发布在上面\n
+至于为什么是俩个账号，是因为之前有***学生活动***，多个账号都可以享受\n
 https://github.com/LiangYuZz
 https://github.com/Chinaplayerlunqt
+---
