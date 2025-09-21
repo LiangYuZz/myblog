@@ -1,7 +1,7 @@
 baseURL = "https://404not.work"
 languageCode = 'zh-cn'
-title = 'LiangYu's Blog'
-theme = 'stack' # 核心：指定使用stack主题
+title = 'LiangYus Blog'
+theme = 'stack'=
 
 
 
