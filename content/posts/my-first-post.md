@@ -11,5 +11,4 @@ featuredImagePreview: "/images/post-1-preview.jpg"
 description: "这是文章的摘要，会显示在列表页和社交媒体预览中。"
 ---
 
-`import 123
-	print("123")`
+6666666
