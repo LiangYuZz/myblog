@@ -32,3 +32,6 @@ theme = 'stack'
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true # 允许在markdown中使用HTML
+[params]
+  [params.sidebar]
+    avatar = "img/avatar.jpg"   // 相对于 assets/ 的路径，前面不要 “/”
