@@ -1,6 +1,6 @@
 baseURL = "https://404not.work"
 languageCode = 'zh-cn'
-title = 'LiangYu's Blog'
+title = 'LiangYu Blog'
 theme = 'stack'
 
 

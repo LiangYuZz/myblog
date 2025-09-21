@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
-        <title>Hugo on 你的博客标题</title>
+        <title>Hugo on LiangYu Blog</title>
         <link>https://404not.work/tags/hugo/</link>
-        <description>Recent content in Hugo on 你的博客标题</description>
+        <description>Recent content in Hugo on LiangYu Blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <lastBuildDate>Fri, 27 Oct 2023 11:25:41 +0800</lastBuildDate><atom:link href="https://404not.work/tags/hugo/index.xml" rel="self" type="application/rss+xml" /><item>
@@ -29,7 +29,7 @@
         <pubDate>Fri, 27 Oct 2023 11:25:41 +0800</pubDate>
         
         <guid>https://404not.work/posts/my-first-post/</guid>
-        <description>&lt;p&gt;初始化文章测试&lt;/p&gt;
+        <description>&lt;p&gt;6666666&lt;/p&gt;
 </description>
         </item>
         
