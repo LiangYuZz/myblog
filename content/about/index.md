@@ -8,11 +8,13 @@ categories: ["技术"]
 series: ["Hugo 搭建记录"]
 featuredImage: '/images/post-1.jpg' # 文章封面图
 featuredImagePreview: '/images/post-1-preview.jpg' # 文章列表中的预览图
-description: "这是文章的摘要，会显示在列表页和社交媒体预览中。"
+description: "一个ZQU的大学生，啥语言都会，啥语言都不精通"
 ---
 
 Welcome to my blog!!!
 
-<!--more--> 
 ***just A University student***
-<!--more--> 标签之上的部分是摘要，之后的部分需要点击“阅读更多”才能展开。
+我的俩个Github账号，也许会有一些有意思的项目发布在上面
+至于为什么是俩个账号，是因为之前有***学生活动***，多个账号都可以享受
+https://github.com/LiangYuZz
+https://github.com/Chinaplayerlunqt
