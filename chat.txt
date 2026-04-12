@@ -1,0 +1,1501 @@
+rked for 3m 54s ────────────────────────────────────────────────────────────────────────────────────────────────────
+
+• 行，不清。前面那句是我判断错了。
+  我刚看完了：hugo_manager.py 不是杂文件，它就是你本地的一键写作/管理台。
+
+  ### 我研究出来的结构
+
+  - hugo_manager.py:48
+    主界面入口，Tkinter GUI，工作目录就是博客根目录。
+  - hugo_manager.py:57-62
+    4 个模式：
+      - 文章
+      - 配置
+      - 静态文件
+      - 主题
+  - hugo_manager.py:242
+    文章编辑面板：标题 / tags / categories / draft + Markdown 编辑器 + 预览。
+  - hugo_manager.py:133
+    快捷键：
+      - Ctrl+S 保存并预览
+      - Ctrl+D 上传博客
+      - Ctrl+N 新建文章
+      - F5 刷新
+  - hugo_manager.py:971
+    新建文章：自动生成 content/posts/*.md，带 YAML front matter。
+  - hugo_manager.py:1026
+    保存文章：把标题、标签、分类、draft 写回 front matter。
+  - hugo_manager.py:1121
+    上传博客：本质就是调用 updateblog.bat。
+  - hugo_manager.py:1235
+    新建文章对话框，会根据标题自动生成文件名，支持中文文件名。
+
+  ### 也就是说
+
+  你的设计其实很清楚：
+
+  hugo_manager.py = 本地写作工具
+  updateblog.bat = 发布工具
+
+  所以 updateblog.bat 里故意排除 hugo_manager.py，这逻辑是通的：
+  你在推的是博客内容，不是本地编辑器本身。
+
+  ———
+
+  ### 我看出来的几个关键点
+
+  #### 1. 这玩意已经不是“小脚本”了
+
+  它现在其实是个 Hugo 本地后台，而且比最初版本大很多，功能已经扩成一套工作流工具了。
+
+  #### 2. 真正的薄弱点不在 GUI，在 front matter 解析
+
+  parse_markdown() 是手搓的，比较脆：
+
+  - 多行 description
+  - 带冒号的值
+  - 复杂 YAML
+  - 嵌套字段
+  - TOML front matter
+
+  这些都容易解析歪。
+
+  #### 3. 预览不是真正的 Hugo 预览
+
+  现在的预览是：
+
+  - 一个 Tk 文本预览
+  - 一个 Python markdown 转 HTML 的浏览器预览
+
+  它不是 Hugo/主题真实渲染，所以如果你用了：
+
+  - shortcode
+  - 主题模板
+  - taxonomy 页
+  - 主题样式联动
+
+  它预览会和最终站点不完全一致。
+
+  #### 4. Ctrl+D 现在已经能走通
+
+  因为我已经把 updateblog.bat 修好了，所以你这个 GUI 里的“上传博客”按钮现在应该能正常用了。
+
+  ———
+
+  ### 一句话定位
+
+  你的 hugo_manager.py 现在是：
+
+  本地写作 + 元信息编辑 + 静态文件管理 + 主题文件编辑 + 一键发布
+
+  不是该删的东西，反而是你博客工作流的核心工具。
+
+  ### 我建议下一步别乱动结构，只升级两处
+
+  1. 把 front matter 解析改稳
+      - 别再手搓解析
+      - 用 yaml.safe_load / 专门 front matter 库
+      - 这样预览才和最终页面一致
+
+  ———
+  - 自动检测 Hugo/路径
+  - 保留你现有界面不推倒重来
+
+
+› 但是他的markdown编辑太屎山了，功能也少，帮我重构一份，预览采用浏览器预览就行
+
+
+  │ test_preview.py run_hugo_manager.bat
+  └ test_preview.py:4:Test script for markdown preview functionality
+    test_preview.py:11:def setup_preview_tags(text_widget):
+    … +94 lines (ctrl + t to view transcript)
+    README.md:143:- ✅ 添加内置 Markdown 预览功能
+    README.md:147:- ✅ 添加 Markdown 编辑工具栏
+
+• Ran python -c "import markdown, yaml; print('ok')"
+  └ ok
+
+• Ran python -c "import pygments; print(pygments.__version__)"
+  └ 2.19.2
+
+• Running Get-Content -LiteralPath .\content\posts\my-first-post.md -TotalCount 80
+
+• Ran Get-ChildItem -LiteralPath .\content\posts -Filter *.md | Select-Object Name,Length,LastWriteTime
+  └
+
+
+• Ran Get-Content -LiteralPath .\content\posts\my-first-post.md -TotalCount 80
+  └ ---
+    title: "鎴戠殑绗竴绡囨枃绔?
+    … +12 lines (ctrl + t to view transcript)
+    兘瀵规垜鏃ュ悗鎬濊€冭嚜宸辩殑鏉ユ椂璺紝鎴栬€呮壘宸ヤ綔鏈夋墍甯姪锛屼粎姝よ€屽凡銆?*
+    ## 姝ゆ枃绔犵敱HUGO MANAGER缂栧啓骞朵竴閿甈USH鍒癎ITHUB
+
+• Ran Get-ChildItem -LiteralPath .\content\posts -Filter *.md | Select-Object Name,Length,LastWriteTime
+  └
+    Name             Length LastWriteTime
+    … +4 lines (ctrl + t to view transcript)
+
+
+
+■ Conversation interrupted - tell the model what to do differently. Something went wrong? Hit `/feedback` to report the
+issue.
+
+
+› 编辑有这么慢吗？
+
+
+• Deleted hugo_manager.py (+0 -1334)
+       1 -#!/usr/bin/env python3
+       2 -# -*- coding: utf-8 -*-
+       3 -"""
+       4 -Hugo Article Manager - A comprehensive GUI application for managing Hugo blogs
+       5 -"""
+       6 -
+       7 -import tkinter as tk
+       8 -from tkinter import ttk, messagebox, filedialog, scrolledtext
+       9 -import os
+      10 -import re
+      11 -import subprocess
+      12 -import datetime
+      13 -from pathlib import Path
+      14 -import markdown
+      15 -import tempfile
+      16 -from tkinter import font
+      17 -import shutil
+      18 -import yaml
+      19 -import toml
+      20 -# Try to import webview for HTML preview
+      21 -try:
+      22 -    import webview
+      23 -    WEBVIEW_AVAILABLE = True
+      24 -except ImportError:
+      25 -    WEBVIEW_AVAILABLE = False
+      26 -
+      27 -# Try to import webbrowser for fallback
+      28 -import webbrowser
+      29 -
+      30 -class HugoManager:
+      31 -    def __init__(self, root):
+      32 -        self.root = root
+      33 -        self.root.title("Hugo Blog Manager")
+      34 -        self.root.geometry("1600x1000")
+      35 -
+      36 -        # Configuration
+      37 -        self.blog_path = Path.cwd()  # Current working directory
+      38 -        self.posts_path = self.blog_path / "content" / "posts"
+      39 -        self.static_path = self.blog_path / "static"
+      40 -        self.config_path = self.blog_path / "hugo.toml"
+      41 -        self.current_file = None
+      42 -        self.current_mode = "articles"  # articles, config, static, themes
+      43 -
+      44 -        # Create GUI
+      45 -        self.create_widgets()
+      46 -        self.refresh_content()
+      47 -
+      48 -    def create_widgets(self):
+      49 -        # Main container
+      50 -        main_frame = ttk.Frame(self.root)
+      51 -        main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+      52 -
+      53 -        # Top toolbar with mode selection
+      54 -        toolbar = ttk.Frame(main_frame)
+      55 -        toolbar.pack(fill=tk.X, pady=(0, 10))
+      56 -
+      57 -        # Mode selection
+      58 -        mode_frame = ttk.LabelFrame(toolbar, text="管理模式", padding=5)
+      59 -        mode_frame.pack(side=tk.LEFT, padx=(0, 10))
+      60 -
+      61 -        self.mode_var = tk.StringVar(value="articles")
+      62 -        ttk.Radiobutton(mode_frame, text="文章", variable=self.mode_var,
+      63 -                       value="articles", command=self.change_mode).pack(side=tk.LEFT)
+      64 -        ttk.Radiobutton(mode_frame, text="配置", variable=self.mode_var,
+      65 -                       value="config", command=self.change_mode).pack(side=tk.LEFT)
+      66 -        ttk.Radiobutton(mode_frame, text="静态文件", variable=self.mode_var,
+      67 -                       value="static", command=self.change_mode).pack(side=tk.LEFT)
+      68 -        ttk.Radiobutton(mode_frame, text="主题", variable=self.mode_var,
+      69 -                       value="themes", command=self.change_mode).pack(side=tk.LEFT)
+      70 -
+      71 -        # Action buttons
+      72 -        action_frame = ttk.Frame(toolbar)
+      73 -        action_frame.pack(side=tk.LEFT, padx=(10, 0))
+      74 -
+      75 -        self.new_btn = ttk.Button(action_frame, text="新建 (Ctrl+N)", command=self.new_item)
+      76 -        self.new_btn.pack(side=tk.LEFT, padx=(0, 5))
+      77 -
+      78 -        ttk.Button(action_frame, text="刷新 (F5)", command=self.refresh_content).pack(side=tk.LEFT, padx=(0, 5
+          ))
+      79 -        ttk.Button(action_frame, text="保存并预览 (Ctrl+S)", command=self.shortcut_save_and_preview).pack(side
+          =tk.LEFT, padx=(0, 5))
+      80 -
+      81 -        # Upload button
+      82 -        ttk.Button(toolbar, text="上传博客 (Ctrl+D)", command=self.upload_blog,
+      83 -                  style="Accent.TButton").pack(side=tk.RIGHT, padx=(5, 0))
+      84 -
+      85 -        # Help button
+      86 -        ttk.Button(toolbar, text="快捷键帮助", command=self.show_shortcuts_help).pack(side=tk.RIGHT, padx=(5,
+          0))
+      87 -
+      88 -        # Main content area
+      89 -        content_frame = ttk.Frame(main_frame)
+      90 -        content_frame.pack(fill=tk.BOTH, expand=True)
+      91 -
+      92 -        # Left panel - Content list
+      93 -        self.left_frame = ttk.LabelFrame(content_frame, text="内容列表", padding=10)
+      94 -        self.left_frame.pack(side=tk.LEFT, fill=tk.Y, padx=(0, 5))
+      95 -
+      96 -        # Content listbox with scrollbar
+      97 -        list_frame = ttk.Frame(self.left_frame)
+      98 -        list_frame.pack(fill=tk.BOTH, expand=True)
+      99 -
+     100 -        self.content_listbox = tk.Listbox(list_frame, width=35)
+     101 -        scrollbar = ttk.Scrollbar(list_frame, orient=tk.VERTICAL, command=self.content_listbox.yview)
+     102 -        self.content_listbox.configure(yscrollcommand=scrollbar.set)
+     103 -
+     104 -        self.content_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+     105 -        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+     106 -
+     107 -        self.content_listbox.bind('<<ListboxSelect>>', self.on_content_select)
+     108 -        self.content_listbox.bind('<Double-Button-1>', self.on_content_double_click)
+     109 -
+     110 -        # Right panel - Editor and preview
+     111 -        right_frame = ttk.Frame(content_frame)
+     112 -        right_frame.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
+     113 -
+     114 -        # Create different panels for different modes
+     115 -        self.create_article_panel(right_frame)
+     116 -        self.create_config_panel(right_frame)
+     117 -        self.create_static_panel(right_frame)
+     118 -        self.create_theme_panel(right_frame)
+     119 -
+     120 -        # Show article panel by default
+     121 -        self.current_panel = self.article_panel
+     122 -        self.article_panel.pack(fill=tk.BOTH, expand=True)
+     123 -
+     124 -        # Status bar
+     125 -        self.status_var = tk.StringVar()
+     126 -        self.status_var.set("就绪 | 快捷键: Ctrl+S 保存并预览, Ctrl+D 上传博客")
+     127 -        status_bar = ttk.Label(main_frame, textvariable=self.status_var, relief=tk.SUNKEN)
+     128 -        status_bar.pack(fill=tk.X, pady=(10, 0))
+     129 -
+     130 -        # Bind keyboard shortcuts
+     131 -        self.setup_shortcuts()
+     132 -
+     133 -    def setup_shortcuts(self):
+     134 -        """设置键盘快捷键"""
+     135 -        # Ctrl+S: 保存并预览
+     136 -        self.root.bind('<Control-s>', self.shortcut_save_and_preview)
+     137 -        self.root.bind('<Control-S>', self.shortcut_save_and_preview)
+     138 -
+     139 -        # Ctrl+D: 上传博客
+     140 -        self.root.bind('<Control-d>', self.shortcut_upload_blog)
+     141 -        self.root.bind('<Control-D>', self.shortcut_upload_blog)
+     142 -
+     143 -        # Ctrl+N: 新建文章
+     144 -        self.root.bind('<Control-n>', self.shortcut_new_article)
+     145 -        self.root.bind('<Control-N>', self.shortcut_new_article)
+     146 -
+     147 -        # F5: 刷新
+     148 -        self.root.bind('<F5>', self.shortcut_refresh)
+     149 -
+     150 -    def shortcut_save_and_preview(self, event=None):
+     151 -        """快捷键：保存并预览"""
+     152 -        if self.current_mode == "articles":
+     153 -            self.save_article()
+     154 -            self.open_in_browser()
+     155 -            self.status_var.set("已保存并在浏览器中打开预览 | Ctrl+S: 保存预览, Ctrl+D: 上传, F5: 刷新")
+     156 -        elif self.current_mode == "config":
+     157 -            self.save_config()
+     158 -            self.status_var.set("配置已保存 | Ctrl+D: 上传博客")
+     159 -        elif self.current_mode == "themes":
+     160 -            self.save_theme_file()
+     161 -            self.status_var.set("主题文件已保存 | Ctrl+D: 上传博客")
+     162 -        return "break"  # Prevent default behavior
+     163 -
+     164 -    def shortcut_upload_blog(self, event=None):
+     165 -        """快捷键：上传博客"""
+     166 -        self.upload_blog()
+     167 -        return "break"
+     168 -
+     169 -    def shortcut_new_article(self, event=None):
+     170 -        """快捷键：新建文章"""
+     171 -        if self.current_mode == "articles":
+     172 -            self.new_article()
+     173 -        return "break"
+     174 -
+     175 -    def shortcut_refresh(self, event=None):
+     176 -        """快捷键：刷新"""
+     177 -        self.refresh_content()
+     178 -        return "break"
+     179 -
+     180 -    def show_shortcuts_help(self):
+     181 -        """显示快捷键帮助"""
+     182 -        help_text = """快捷键帮助
+     183 -
+     184 -文章编辑快捷键：
+     185 -• Ctrl+S    保存当前内容并在浏览器中预览
+     186 -• Ctrl+D    构建并上传博客到服务器
+     187 -• Ctrl+N    新建文章（仅在文章模式下）
+     188 -• F5        刷新当前内容列表
+     189 -
+     190 -编辑器快捷键：
+     191 -• Ctrl+Z    撤销
+     192 -• Ctrl+Y    重做
+     193 -• Ctrl+A    全选
+     194 -• Ctrl+C    复制
+     195 -• Ctrl+V    粘贴
+     196 -• Ctrl+X    剪切
+     197 -
+     198 -Markdown工具栏：
+     199 -• B         粗体 **文本**
+     200 -• I         斜体 *文本*
+     201 -• H1/H2     标题 # ##
+     202 -• Link      链接 [文本](URL)
+     203 -• Code      代码 `代码`
+     204 -• 预览      更新预览并切换到预览标签页
+     205 -
+     206 -提示：
+     207 -- 在文章模式下，Ctrl+S 会自动保存并在浏览器中打开预览
+     208 -- 预览功能支持完整的 Markdown 格式和 CSS 样式
+     209 -- 上传功能会自动运行 hugo 构建和 git 推送"""
+     210 -
+     211 -        # Create help dialog
+     212 -        help_dialog = tk.Toplevel(self.root)
+     213 -        help_dialog.title("快捷键帮助")
+     214 -        help_dialog.geometry("500x600")
+     215 -        help_dialog.transient(self.root)
+     216 -        help_dialog.grab_set()
+     217 -
+     218 -        # Center the dialog
+     219 -        help_dialog.geometry("+%d+%d" % (self.root.winfo_rootx() + 100, self.root.winfo_rooty() + 50))
+     220 -
+     221 -        # Help text
+     222 -        text_frame = ttk.Frame(help_dialog, padding=20)
+     223 -        text_frame.pack(fill=tk.BOTH, expand=True)
+     224 -
+     225 -        help_text_widget = scrolledtext.ScrolledText(
+     226 -            text_frame,
+     227 -            wrap=tk.WORD,
+     228 -            font=('Microsoft YaHei', 10),
+     229 -            state=tk.DISABLED
+     230 -        )
+     231 -        help_text_widget.pack(fill=tk.BOTH, expand=True)
+     232 -
+     233 -        help_text_widget.configure(state=tk.NORMAL)
+     234 -        help_text_widget.insert(tk.END, help_text)
+     235 -        help_text_widget.configure(state=tk.DISABLED)
+     236 -
+     237 -        # Close button
+     238 -        button_frame = ttk.Frame(help_dialog)
+     239 -        button_frame.pack(fill=tk.X, padx=20, pady=(0, 20))
+     240 -        ttk.Button(button_frame, text="关闭", command=help_dialog.destroy).pack(side=tk.RIGHT)
+     241 -
+     242 -    def create_article_panel(self, parent):
+     243 -        """创建文章编辑面板"""
+     244 -        self.article_panel = ttk.Frame(parent)
+     245 -
+     246 -        # Notebook for editor and preview tabs
+     247 -        notebook = ttk.Notebook(self.article_panel)
+     248 -        notebook.pack(fill=tk.BOTH, expand=True)
+     249 -
+     250 -        # Editor tab
+     251 -        editor_frame = ttk.Frame(notebook)
+     252 -        notebook.add(editor_frame, text="编辑器")
+     253 -
+     254 -        # Article info frame
+     255 -        info_frame = ttk.LabelFrame(editor_frame, text="文章信息", padding=10)
+     256 -        info_frame.pack(fill=tk.X, pady=(0, 10))
+     257 -
+     258 -        # Title
+     259 -        ttk.Label(info_frame, text="标题:").grid(row=0, column=0, sticky=tk.W, padx=(0, 5))
+     260 -        self.title_var = tk.StringVar()
+     261 -        self.title_entry = ttk.Entry(info_frame, textvariable=self.title_var, width=50)
+     262 -        self.title_entry.grid(row=0, column=1, sticky=tk.W+tk.E, padx=(0, 10))
+     263 -
+     264 -        # Tags
+     265 -        ttk.Label(info_frame, text="标签:").grid(row=0, column=2, sticky=tk.W, padx=(10, 5))
+     266 -        self.tags_var = tk.StringVar()
+     267 -        self.tags_entry = ttk.Entry(info_frame, textvariable=self.tags_var, width=30)
+     268 -        self.tags_entry.grid(row=0, column=3, sticky=tk.W+tk.E)
+     269 -
+     270 -        # Categories
+     271 -        ttk.Label(info_frame, text="分类:").grid(row=1, column=0, sticky=tk.W, padx=(0, 5))
+     272 -        self.categories_var = tk.StringVar()
+     273 -        self.categories_entry = ttk.Entry(info_frame, textvariable=self.categories_var, width=50)
+     274 -        self.categories_entry.grid(row=1, column=1, sticky=tk.W+tk.E, padx=(0, 10))
+     275 -
+     276 -        # Draft status
+     277 -        self.draft_var = tk.BooleanVar()
+     278 -        self.draft_check = ttk.Checkbutton(info_frame, text="草稿", variable=self.draft_var)
+     279 -        self.draft_check.grid(row=1, column=2, sticky=tk.W, padx=(10, 5))
+     280 -
+     281 -        info_frame.columnconfigure(1, weight=1)
+     282 -        info_frame.columnconfigure(3, weight=1)
+     283 -
+     284 -        # Text editor with toolbar
+     285 -        editor_container = ttk.Frame(editor_frame)
+     286 -        editor_container.pack(fill=tk.BOTH, expand=True)
+     287 -
+     288 -        # Markdown toolbar
+     289 -        toolbar = ttk.Frame(editor_container)
+     290 -        toolbar.pack(fill=tk.X, pady=(0, 5))
+     291 -
+     292 -        ttk.Button(toolbar, text="B", width=3, command=lambda: self.insert_markdown("**", "**")).pack(side=tk.
+          LEFT, padx=1)
+     293 -        ttk.Button(toolbar, text="I", width=3, command=lambda: self.insert_markdown("*", "*")).pack(side=tk.LE
+          FT, padx=1)
+     294 -        ttk.Button(toolbar, text="H1", width=3, command=lambda: self.insert_markdown("# ", "")).pack(side=tk.L
+          EFT, padx=1)
+     295 -        ttk.Button(toolbar, text="H2", width=3, command=lambda: self.insert_markdown("## ", "")).pack(side=tk.
+          LEFT, padx=1)
+     296 -        ttk.Button(toolbar, text="Link", width=5, command=self.insert_link).pack(side=tk.LEFT, padx=1)
+     297 -        ttk.Button(toolbar, text="Code", width=5, command=lambda: self.insert_markdown("`", "`")).pack(side=tk
+          .LEFT, padx=1)
+     298 -        ttk.Button(toolbar, text="预览", command=self.update_preview).pack(side=tk.RIGHT, padx=5)
+     299 -
+     300 -        self.text_editor = scrolledtext.ScrolledText(
+     301 -            editor_container,
+     302 -            wrap=tk.WORD,
+     303 -            font=('Consolas', 11),
+     304 -            undo=True
+     305 -        )
+     306 -        self.text_editor.pack(fill=tk.BOTH, expand=True)
+     307 -        self.text_editor.bind('<KeyRelease>', self.on_text_change)
+     308 -
+     309 -        # Preview tab with HTML rendering
+     310 -        preview_frame = ttk.Frame(notebook)
+     311 -        notebook.add(preview_frame, text="预览")
+     312 -
+     313 -        # Create preview toolbar
+     314 -        preview_toolbar = ttk.Frame(preview_frame)
+     315 -        preview_toolbar.pack(fill=tk.X, pady=(0, 5))
+     316 -
+     317 -        ttk.Button(preview_toolbar, text="刷新预览", command=self.update_preview).pack(side=tk.LEFT, padx=(0,
+          5))
+     318 -        ttk.Button(preview_toolbar, text="在浏览器中打开", command=self.open_in_browser).pack(side=tk.LEFT, pa
+          dx=(0, 5))
+     319 -
+     320 -        # Create HTML preview using Text widget with better formatting
+     321 -        preview_container = ttk.Frame(preview_frame)
+     322 -        preview_container.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+     323 -
+     324 -        self.preview_text = scrolledtext.ScrolledText(
+     325 -            preview_container,
+     326 -            wrap=tk.WORD,
+     327 -            font=('Microsoft YaHei', 11),
+     328 -            state=tk.DISABLED,
+     329 -            bg='white'
+     330 -        )
+     331 -        self.preview_text.pack(fill=tk.BOTH, expand=True)
+     332 -
+     333 -        # Configure text tags for markdown formatting
+     334 -        self.setup_preview_tags()
+     335 -
+     336 -        # Store notebook reference for tab switching
+     337 -        self.article_notebook = notebook
+     338 -
+     339 -    def create_config_panel(self, parent):
+     340 -        """创建配置编辑面板"""
+     341 -        self.config_panel = ttk.Frame(parent)
+     342 -
+     343 -        # Config editor
+     344 -        config_label = ttk.Label(self.config_panel, text="Hugo 配置文件 (hugo.toml)", font=('Arial', 12, 'bold
+          '))
+     345 -        config_label.pack(pady=(0, 10))
+     346 -
+     347 -        self.config_editor = scrolledtext.ScrolledText(
+     348 -            self.config_panel,
+     349 -            wrap=tk.WORD,
+     350 -            font=('Consolas', 11),
+     351 -            undo=True
+     352 -        )
+     353 -        self.config_editor.pack(fill=tk.BOTH, expand=True)
+     354 -
+     355 -    def create_static_panel(self, parent):
+     356 -        """创建静态文件管理面板"""
+     357 -        self.static_panel = ttk.Frame(parent)
+     358 -
+     359 -        # File operations toolbar
+     360 -        static_toolbar = ttk.Frame(self.static_panel)
+     361 -        static_toolbar.pack(fill=tk.X, pady=(0, 10))
+     362 -
+     363 -        ttk.Button(static_toolbar, text="上传文件", command=self.upload_static_file).pack(side=tk.LEFT, padx=(
+          0, 5))
+     364 -        ttk.Button(static_toolbar, text="新建文件夹", command=self.create_static_folder).pack(side=tk.LEFT, pa
+          dx=(0, 5))
+     365 -        ttk.Button(static_toolbar, text="删除", command=self.delete_static_item).pack(side=tk.LEFT, padx=(0, 5
+          ))
+     366 -
+     367 -        # File tree view
+     368 -        self.static_tree = ttk.Treeview(self.static_panel, columns=('size', 'modified'), show='tree headings')
+     369 -        self.static_tree.heading('#0', text='文件名')
+     370 -        self.static_tree.heading('size', text='大小')
+     371 -        self.static_tree.heading('modified', text='修改时间')
+     372 -        self.static_tree.pack(fill=tk.BOTH, expand=True)
+     373 -
+     374 -    def create_theme_panel(self, parent):
+     375 -        """创建主题管理面板"""
+     376 -        self.theme_panel = ttk.Frame(parent)
+     377 -
+     378 -        theme_label = ttk.Label(self.theme_panel, text="主题文件管理", font=('Arial', 12, 'bold'))
+     379 -        theme_label.pack(pady=(0, 10))
+     380 -
+     381 -        # Theme file editor
+     382 -        self.theme_editor = scrolledtext.ScrolledText(
+     383 -            self.theme_panel,
+     384 -            wrap=tk.WORD,
+     385 -            font=('Consolas', 11),
+     386 -            undo=True
+     387 -        )
+     388 -        self.theme_editor.pack(fill=tk.BOTH, expand=True)
+     389 -
+     390 -    def setup_preview_tags(self):
+     391 -        """设置预览文本的格式标签"""
+     392 -        self.preview_text.tag_configure("h1", font=('Microsoft YaHei', 18, 'bold'), spacing1=15, spacing3=10,
+          foreground='#2c3e50')
+     393 -        self.preview_text.tag_configure("h2", font=('Microsoft YaHei', 16, 'bold'), spacing1=12, spacing3=8, f
+          oreground='#34495e')
+     394 -        self.preview_text.tag_configure("h3", font=('Microsoft YaHei', 14, 'bold'), spacing1=10, spacing3=6, f
+          oreground='#34495e')
+     395 -        self.preview_text.tag_configure("bold", font=('Microsoft YaHei', 11, 'bold'), foreground='#2c3e50')
+     396 -        self.preview_text.tag_configure("italic", font=('Microsoft YaHei', 11, 'italic'), foreground='#7f8c8d'
+          )
+     397 -        self.preview_text.tag_configure("code", font=('Consolas', 10), background='#f8f9fa', foreground='#e74c
+          3c', relief='solid', borderwidth=1)
+     398 -        self.preview_text.tag_configure("code_block", font=('Consolas', 10), background='#f8f9fa', lmargin1=20
+          , lmargin2=20, spacing1=5, spacing3=5)
+     399 -        self.preview_text.tag_configure("blockquote", lmargin1=20, lmargin2=20, foreground='#7f8c8d', font=('M
+          icrosoft YaHei', 11, 'italic'))
+     400 -        self.preview_text.tag_configure("link", font=('Microsoft YaHei', 11), foreground='#3498db', underline=
+          True)
+     401 -
+     402 -    def change_mode(self):
+     403 -        """切换管理模式"""
+     404 -        new_mode = self.mode_var.get()
+     405 -        if new_mode == self.current_mode:
+     406 -            return
+     407 -
+     408 -        # Hide current panel
+     409 -        self.current_panel.pack_forget()
+     410 -
+     411 -        # Show new panel
+     412 -        if new_mode == "articles":
+     413 -            self.current_panel = self.article_panel
+     414 -            self.left_frame.configure(text="文章列表")
+     415 -            self.new_btn.configure(text="新建文章")
+     416 -        elif new_mode == "config":
+     417 -            self.current_panel = self.config_panel
+     418 -            self.left_frame.configure(text="配置文件")
+     419 -            self.new_btn.configure(text="重置配置")
+     420 -        elif new_mode == "static":
+     421 -            self.current_panel = self.static_panel
+     422 -            self.left_frame.configure(text="静态文件")
+     423 -            self.new_btn.configure(text="上传文件")
+     424 -        elif new_mode == "themes":
+     425 -            self.current_panel = self.theme_panel
+     426 -            self.left_frame.configure(text="主题文件")
+     427 -            self.new_btn.configure(text="新建模板")
+     428 -
+     429 -        self.current_panel.pack(fill=tk.BOTH, expand=True)
+     430 -        self.current_mode = new_mode
+     431 -        self.refresh_content()
+     432 -
+     433 -    def refresh_content(self):
+     434 -        """根据当前模式刷新内容"""
+     435 -        if self.current_mode == "articles":
+     436 -            self.refresh_articles()
+     437 -        elif self.current_mode == "config":
+     438 -            self.refresh_config()
+     439 -        elif self.current_mode == "static":
+     440 -            self.refresh_static_files()
+     441 -        elif self.current_mode == "themes":
+     442 -            self.refresh_theme_files()
+     443 -
+     444 -    def insert_markdown(self, prefix, suffix):
+     445 -        """插入Markdown格式"""
+     446 -        try:
+     447 -            sel_start = self.text_editor.index(tk.SEL_FIRST)
+     448 -            sel_end = self.text_editor.index(tk.SEL_LAST)
+     449 -            selected_text = self.text_editor.get(sel_start, sel_end)
+     450 -            self.text_editor.delete(sel_start, sel_end)
+     451 -            self.text_editor.insert(sel_start, f"{prefix}{selected_text}{suffix}")
+     452 -        except tk.TclError:
+     453 -            # No selection, insert at cursor
+     454 -            cursor_pos = self.text_editor.index(tk.INSERT)
+     455 -            self.text_editor.insert(cursor_pos, f"{prefix}{suffix}")
+     456 -            # Move cursor between prefix and suffix
+     457 -            new_pos = self.text_editor.index(f"{cursor_pos}+{len(prefix)}c")
+     458 -            self.text_editor.mark_set(tk.INSERT, new_pos)
+     459 -
+     460 -    def insert_link(self):
+     461 -        """插入链接"""
+     462 -        try:
+     463 -            sel_start = self.text_editor.index(tk.SEL_FIRST)
+     464 -            sel_end = self.text_editor.index(tk.SEL_LAST)
+     465 -            selected_text = self.text_editor.get(sel_start, sel_end)
+     466 -            self.text_editor.delete(sel_start, sel_end)
+     467 -            self.text_editor.insert(sel_start, f"[{selected_text}](url)")
+     468 -        except tk.TclError:
+     469 -            cursor_pos = self.text_editor.index(tk.INSERT)
+     470 -            self.text_editor.insert(cursor_pos, "[链接文本](url)")
+     471 -
+     472 -    def on_text_change(self, event=None):
+     473 -        """文本改变时的处理"""
+     474 -        # Auto-update preview if preview tab is active
+     475 -        pass  # We'll update preview manually for performance
+     476 -
+     477 -    def update_preview(self):
+     478 -        """更新预览并切换到预览标签页"""
+     479 -        if self.current_mode != "articles":
+     480 -            return
+     481 -
+     482 -        try:
+     483 -            # Get markdown content
+     484 -            markdown_content = self.text_editor.get(1.0, tk.END).strip()
+     485 -
+     486 -            # Convert to formatted text with proper markdown parsing
+     487 -            self.preview_text.configure(state=tk.NORMAL)
+     488 -            self.preview_text.delete(1.0, tk.END)
+     489 -
+     490 -            # Parse markdown content line by line
+     491 -            lines = markdown_content.split('\n')
+     492 -            i = 0
+     493 -            while i < len(lines):
+     494 -                line = lines[i].rstrip()
+     495 -
+     496 -                # Handle different markdown elements
+     497 -                if line.startswith('# '):
+     498 -                    self.preview_text.insert(tk.END, line[2:] + '\n\n', 'h1')
+     499 -                elif line.startswith('## '):
+     500 -                    self.preview_text.insert(tk.END, line[3:] + '\n\n', 'h2')
+     501 -                elif line.startswith('### '):
+     502 -                    self.preview_text.insert(tk.END, line[4:] + '\n\n', 'h3')
+     503 -                elif line.startswith('> '):
+     504 -                    self.preview_text.insert(tk.END, line[2:] + '\n', 'blockquote')
+     505 -                elif line.startswith('```'):
+     506 -                    # Handle code blocks
+     507 -                    i += 1
+     508 -                    code_content = ""
+     509 -                    while i < len(lines) and not lines[i].startswith('```'):
+     510 -                        code_content += lines[i] + '\n'
+     511 -                        i += 1
+     512 -                    self.preview_text.insert(tk.END, code_content, 'code_block')
+     513 -                elif line.strip() == '':
+     514 -                    self.preview_text.insert(tk.END, '\n')
+     515 -                else:
+     516 -                    # Handle inline formatting
+     517 -                    self.insert_formatted_line(line)
+     518 -
+     519 -                i += 1
+     520 -
+     521 -            self.preview_text.configure(state=tk.DISABLED)
+     522 -
+     523 -            # Switch to preview tab
+     524 -            try:
+     525 -                self.article_notebook.select(1)  # Select preview tab (index 1)
+     526 -                self.status_var.set("预览已更新并切换到预览页面")
+     527 -            except Exception:
+     528 -                self.status_var.set("预览已更新")
+     529 -
+     530 -        except Exception as e:
+     531 -            messagebox.showerror("错误", f"预览更新失败: {str(e)}")
+     532 -
+     533 -    def open_in_browser(self):
+     534 -        """在外部浏览器中打开预览"""
+     535 -        if self.current_mode != "articles":
+     536 -            return
+     537 -
+     538 -        try:
+     539 -            # Get markdown content
+     540 -            markdown_content = self.text_editor.get(1.0, tk.END).strip()
+     541 -
+     542 -            # Convert to HTML using markdown library
+     543 -            md = markdown.Markdown(extensions=['extra', 'codehilite', 'toc'])
+     544 -            html_content = md.convert(markdown_content)
+     545 -
+     546 -            # Create HTML template
+     547 -            html_template = f"""<!DOCTYPE html>
+     548 -<html>
+     549 -<head>
+     550 -    <meta charset="utf-8">
+     551 -    <title>{self.title_var.get()}</title>
+     552 -    <style>
+     553 -        body {{
+     554 -            font-family: 'Microsoft YaHei', 'Segoe UI', Arial, sans-serif;
+     555 -            line-height: 1.6;
+     556 -            max-width: 800px;
+     557 -            margin: 40px auto;
+     558 -            padding: 20px;
+     559 -            color: #333;
+     560 -        }}
+     561 -        h1, h2, h3, h4, h5, h6 {{
+     562 -            color: #2c3e50;
+     563 -            margin-top: 30px;
+     564 -            margin-bottom: 15px;
+     565 -        }}
+     566 -        h1 {{ font-size: 2.2em; border-bottom: 2px solid #3498db; padding-bottom: 10px; }}
+     567 -        h2 {{ font-size: 1.8em; border-bottom: 1px solid #bdc3c7; padding-bottom: 5px; }}
+     568 -        h3 {{ font-size: 1.4em; }}
+     569 -        code {{
+     570 -            background: #f8f9fa;
+     571 -            padding: 2px 6px;
+     572 -            border-radius: 3px;
+     573 -            font-family: 'Consolas', 'Monaco', monospace;
+     574 -            color: #e74c3c;
+     575 -        }}
+     576 -        pre {{
+     577 -            background: #f8f9fa;
+     578 -            padding: 15px;
+     579 -            border-radius: 5px;
+     580 -            overflow-x: auto;
+     581 -            border-left: 4px solid #3498db;
+     582 -        }}
+     583 -        pre code {{
+     584 -            background: none;
+     585 -            padding: 0;
+     586 -            color: #2c3e50;
+     587 -        }}
+     588 -        blockquote {{
+     589 -            border-left: 4px solid #3498db;
+     590 -            margin: 20px 0;
+     591 -            padding-left: 20px;
+     592 -            color: #7f8c8d;
+     593 -            font-style: italic;
+     594 -        }}
+     595 -        a {{ color: #3498db; text-decoration: none; }}
+     596 -        a:hover {{ text-decoration: underline; }}
+     597 -        table {{ border-collapse: collapse; width: 100%; margin: 20px 0; }}
+     598 -        th, td {{ border: 1px solid #ddd; padding: 12px; text-align: left; }}
+     599 -        th {{ background-color: #f8f9fa; font-weight: bold; }}
+     600 -        img {{ max-width: 100%; height: auto; }}
+     601 -    </style>
+     602 -</head>
+     603 -<body>
+     604 -    <h1>{self.title_var.get()}</h1>
+     605 -    {html_content}
+     606 -</body>
+     607 -</html>"""
+     608 -
+     609 -            # Save to temporary file and open in browser
+     610 -            with tempfile.NamedTemporaryFile(mode='w', suffix='.html', delete=False, encoding='utf-8') as f:
+     611 -                f.write(html_template)
+     612 -                temp_file = f.name
+     613 -
+     614 -            webbrowser.open(f'file://{temp_file}')
+     615 -            self.status_var.set("已在浏览器中打开预览")
+     616 -
+     617 -        except Exception as e:
+     618 -            messagebox.showerror("错误", f"打开浏览器预览失败: {str(e)}")
+     619 -
+     620 -    def format_inline_markdown(self, text):
+     621 -        """处理行内Markdown格式"""
+     622 -        if not text.strip():
+     623 -            return text
+     624 -
+     625 -        # Handle bold **text**
+     626 -        import re
+     627 -
+     628 -        # Process the text in segments to handle formatting
+     629 -        result_parts = []
+     630 -        current_pos = 0
+     631 -
+     632 -        # Find all markdown patterns
+     633 -        patterns = [
+     634 -            (r'\*\*(.*?)\*\*', 'bold'),      # **bold**
+     635 -            (r'\*(.*?)\*', 'italic'),        # *italic*
+     636 -            (r'`(.*?)`', 'code'),            # `code`
+     637 -            (r'\[(.*?)\]\((.*?)\)', 'link'), # [text](url)
+     638 -        ]
+     639 -
+     640 -        # Find all matches and their positions
+     641 -        matches = []
+     642 -        for pattern, tag in patterns:
+     643 -            for match in re.finditer(pattern, text):
+     644 -                matches.append((match.start(), match.end(), match, tag))
+     645 -
+     646 -        # Sort matches by position
+     647 -        matches.sort(key=lambda x: x[0])
+     648 -
+     649 -        # Process text with formatting
+     650 -        for start, end, match, tag in matches:
+     651 -            # Add text before this match
+     652 -            if start > current_pos:
+     653 -                result_parts.append((text[current_pos:start], None))
+     654 -
+     655 -            # Add formatted text
+     656 -            if tag == 'link':
+     657 -                link_text = match.group(1)
+     658 -                link_url = match.group(2)
+     659 -                result_parts.append((f"{link_text} ({link_url})", 'link'))
+     660 -            else:
+     661 -                result_parts.append((match.group(1), tag))
+     662 -
+     663 -            current_pos = end
+     664 -
+     665 -        # Add remaining text
+     666 -        if current_pos < len(text):
+     667 -            result_parts.append((text[current_pos:], None))
+     668 -
+     669 -        # Insert formatted text into preview
+     670 -        if result_parts:
+     671 -            formatted_text = ""
+     672 -            for part_text, tag in result_parts:
+     673 -                if tag == 'bold':
+     674 -                    formatted_text += f"【{part_text}】"
+     675 -                elif tag == 'italic':
+     676 -                    formatted_text += f"〈{part_text}〉"
+     677 -                elif tag == 'code':
+     678 -                    formatted_text += f"`{part_text}`"
+     679 -                elif tag == 'link':
+     680 -                    formatted_text += part_text
+     681 -                else:
+     682 -                    formatted_text += part_text
+     683 -            return formatted_text
+     684 -
+     685 -        return text
+     686 -
+     687 -    def insert_formatted_line(self, text):
+     688 -        """插入格式化的文本行到预览窗口"""
+     689 -        if not text.strip():
+     690 -            self.preview_text.insert(tk.END, '\n')
+     691 -            return
+     692 -
+     693 -        import re
+     694 -
+     695 -        # Find all markdown patterns and their positions
+     696 -        patterns = [
+     697 -            (r'\*\*(.*?)\*\*', 'bold'),      # **bold**
+     698 -            (r'\*(.*?)\*', 'italic'),        # *italic*
+     699 -            (r'`(.*?)`', 'code'),            # `code`
+     700 -            (r'\[(.*?)\]\((.*?)\)', 'link'), # [text](url)
+     701 -        ]
+     702 -
+     703 -        # Find all matches
+     704 -        matches = []
+     705 -        for pattern, tag in patterns:
+     706 -            for match in re.finditer(pattern, text):
+     707 -                matches.append((match.start(), match.end(), match, tag))
+     708 -
+     709 -        # Sort by position
+     710 -        matches.sort(key=lambda x: x[0])
+     711 -
+     712 -        # Insert text with formatting
+     713 -        current_pos = 0
+     714 -        for start, end, match, tag in matches:
+     715 -            # Insert plain text before this match
+     716 -            if start > current_pos:
+     717 -                self.preview_text.insert(tk.END, text[current_pos:start])
+     718 -
+     719 -            # Insert formatted text
+     720 -            if tag == 'link':
+     721 -                link_text = match.group(1)
+     722 -                link_url = match.group(2)
+     723 -                self.preview_text.insert(tk.END, link_text, 'link')
+     724 -                self.preview_text.insert(tk.END, f" ({link_url})", 'link')
+     725 -            else:
+     726 -                self.preview_text.insert(tk.END, match.group(1), tag)
+     727 -
+     728 -            current_pos = end
+     729 -
+     730 -        # Insert remaining text
+     731 -        if current_pos < len(text):
+     732 -            self.preview_text.insert(tk.END, text[current_pos:])
+     733 -
+     734 -        self.preview_text.insert(tk.END, '\n')
+     735 -
+     736 -    def refresh_articles(self):
+     737 -        """刷新文章列表"""
+     738 -        self.content_listbox.delete(0, tk.END)
+     739 -
+     740 -        if not self.posts_path.exists():
+     741 -            self.status_var.set("文章目录不存在")
+     742 -            return
+     743 -
+     744 -        articles = []
+     745 -        for file_path in self.posts_path.glob("*.md"):
+     746 -            articles.append(file_path.name)
+     747 -
+     748 -        articles.sort()
+     749 -        for article in articles:
+     750 -            self.content_listbox.insert(tk.END, article)
+     751 -
+     752 -        self.status_var.set(f"找到 {len(articles)} 篇文章")
+     753 -
+     754 -    def refresh_config(self):
+     755 -        """刷新配置文件列表"""
+     756 -        self.content_listbox.delete(0, tk.END)
+     757 -
+     758 -        config_files = ["hugo.toml", "config.toml", "config.yaml", "config.yml"]
+     759 -        for config_file in config_files:
+     760 -            if (self.blog_path / config_file).exists():
+     761 -                self.content_listbox.insert(tk.END, config_file)
+     762 -
+     763 -        # Load main config file
+     764 -        if self.config_path.exists():
+     765 -            try:
+     766 -                with open(self.config_path, 'r', encoding='utf-8') as f:
+     767 -                    content = f.read()
+     768 -                self.config_editor.delete(1.0, tk.END)
+     769 -                self.config_editor.insert(1.0, content)
+     770 -            except Exception as e:
+     771 -                self.status_var.set(f"加载配置失败: {str(e)}")
+     772 -
+     773 -    def refresh_static_files(self):
+     774 -        """刷新静态文件列表"""
+     775 -        self.content_listbox.delete(0, tk.END)
+     776 -
+     777 -        if not self.static_path.exists():
+     778 -            self.static_path.mkdir(parents=True, exist_ok=True)
+     779 -
+     780 -        # Clear tree
+     781 -        for item in self.static_tree.get_children():
+     782 -            self.static_tree.delete(item)
+     783 -
+     784 -        # Populate tree
+     785 -        self.populate_file_tree(self.static_path, "")
+     786 -
+     787 -    def populate_file_tree(self, path, parent):
+     788 -        """填充文件树"""
+     789 -        try:
+     790 -            for item in sorted(path.iterdir()):
+     791 -                if item.is_dir():
+     792 -                    folder_id = self.static_tree.insert(parent, 'end', text=item.name,
+     793 -                                                       values=('文件夹', ''))
+     794 -                    self.populate_file_tree(item, folder_id)
+     795 -                else:
+     796 -                    size = item.stat().st_size
+     797 -                    modified = datetime.datetime.fromtimestamp(item.stat().st_mtime).strftime('%Y-%m-%d %H:%M'
+          )
+     798 -                    self.static_tree.insert(parent, 'end', text=item.name,
+     799 -                                          values=(f'{size} bytes', modified))
+     800 -        except Exception as e:
+     801 -            self.status_var.set(f"读取文件夹失败: {str(e)}")
+     802 -
+     803 -    def refresh_theme_files(self):
+     804 -        """刷新主题文件列表"""
+     805 -        self.content_listbox.delete(0, tk.END)
+     806 -
+     807 -        themes_path = self.blog_path / "themes"
+     808 -        layouts_path = self.blog_path / "layouts"
+     809 -
+     810 -        # List theme files
+     811 -        if themes_path.exists():
+     812 -            for theme_dir in themes_path.iterdir():
+     813 -                if theme_dir.is_dir():
+     814 -                    self.content_listbox.insert(tk.END, f"themes/{theme_dir.name}")
+     815 -
+     816 -        # List custom layouts
+     817 -        if layouts_path.exists():
+     818 -            for layout_file in layouts_path.rglob("*.html"):
+     819 -                rel_path = layout_file.relative_to(self.blog_path)
+     820 -                self.content_listbox.insert(tk.END, str(rel_path))
+     821 -
+     822 -    def on_content_select(self, event):
+     823 -        """选择内容时的处理"""
+     824 -        selection = self.content_listbox.curselection()
+     825 -        if not selection:
+     826 -            return
+     827 -
+     828 -        filename = self.content_listbox.get(selection[0])
+     829 -
+     830 -        if self.current_mode == "articles":
+     831 -            self.load_article(filename)
+     832 -        elif self.current_mode == "config":
+     833 -            self.load_config_file(filename)
+     834 -        elif self.current_mode == "themes":
+     835 -            self.load_theme_file(filename)
+     836 -
+     837 -    def on_content_double_click(self, event):
+     838 -        """双击内容时的处理"""
+     839 -        if self.current_mode == "static":
+     840 -            # Open file or folder
+     841 -            pass
+     842 -
+     843 -    def load_config_file(self, filename):
+     844 -        """加载配置文件"""
+     845 -        file_path = self.blog_path / filename
+     846 -        try:
+     847 -            with open(file_path, 'r', encoding='utf-8') as f:
+     848 -                content = f.read()
+     849 -            self.config_editor.delete(1.0, tk.END)
+     850 -            self.config_editor.insert(1.0, content)
+     851 -            self.current_file = file_path
+     852 -            self.status_var.set(f"已加载配置文件: {filename}")
+     853 -        except Exception as e:
+     854 -            messagebox.showerror("错误", f"加载配置文件失败: {str(e)}")
+     855 -
+     856 -    def load_theme_file(self, filename):
+     857 -        """加载主题文件"""
+     858 -        file_path = self.blog_path / filename
+     859 -        try:
+     860 -            with open(file_path, 'r', encoding='utf-8') as f:
+     861 -                content = f.read()
+     862 -            self.theme_editor.delete(1.0, tk.END)
+     863 -            self.theme_editor.insert(1.0, content)
+     864 -            self.current_file = file_path
+     865 -            self.status_var.set(f"已加载主题文件: {filename}")
+     866 -        except Exception as e:
+     867 -            messagebox.showerror("错误", f"加载主题文件失败: {str(e)}")
+     868 -
+     869 -    def new_item(self):
+     870 -        """根据当前模式创建新项目"""
+     871 -        if self.current_mode == "articles":
+     872 -            self.new_article()
+     873 -        elif self.current_mode == "config":
+     874 -            self.reset_config()
+     875 -        elif self.current_mode == "static":
+     876 -            self.upload_static_file()
+     877 -        elif self.current_mode == "themes":
+     878 -            self.new_theme_file()
+     879 -
+     880 -    def save_current(self):
+     881 -        """保存当前内容"""
+     882 -        if self.current_mode == "articles":
+     883 -            self.save_article()
+     884 -        elif self.current_mode == "config":
+     885 -            self.save_config()
+     886 -        elif self.current_mode == "themes":
+     887 -            self.save_theme_file()
+     888 -
+     889 -    def save_config(self):
+     890 -        """保存配置文件"""
+     891 -        if not self.current_file:
+     892 -            messagebox.showwarning("警告", "没有打开的配置文件")
+     893 -            return
+     894 -
+     895 -        try:
+     896 -            content = self.config_editor.get(1.0, tk.END).rstrip()
+     897 -            with open(self.current_file, 'w', encoding='utf-8') as f:
+     898 -                f.write(content)
+     899 -            self.status_var.set(f"已保存配置文件: {self.current_file.name}")
+     900 -        except Exception as e:
+     901 -            messagebox.showerror("错误", f"保存配置文件失败: {str(e)}")
+     902 -
+     903 -    def save_theme_file(self):
+     904 -        """保存主题文件"""
+     905 -        if not self.current_file:
+     906 -            messagebox.showwarning("警告", "没有打开的主题文件")
+     907 -            return
+     908 -
+     909 -        try:
+     910 -            content = self.theme_editor.get(1.0, tk.END).rstrip()
+     911 -            with open(self.current_file, 'w', encoding='utf-8') as f:
+     912 -                f.write(content)
+     913 -            self.status_var.set(f"已保存主题文件: {self.current_file.name}")
+     914 -        except Exception as e:
+     915 -            messagebox.showerror("错误", f"保存主题文件失败: {str(e)}")
+     916 -
+     917 -    def load_article(self, filename):
+     918 -        """加载文章内容"""
+     919 -        file_path = self.posts_path / filename
+     920 -        self.current_file = file_path
+     921 -
+     922 -        try:
+     923 -            with open(file_path, 'r', encoding='utf-8') as f:
+     924 -                content = f.read()
+     925 -
+     926 -            # Parse front matter and content
+     927 -            front_matter, body = self.parse_markdown(content)
+     928 -
+     929 -            # Update UI
+     930 -            self.title_var.set(front_matter.get('title', ''))
+     931 -            self.tags_var.set(', '.join(front_matter.get('tags', [])))
+     932 -            self.categories_var.set(', '.join(front_matter.get('categories', [])))
+     933 -            self.draft_var.set(front_matter.get('draft', False))
+     934 -
+     935 -            self.text_editor.delete(1.0, tk.END)
+     936 -            self.text_editor.insert(1.0, body)
+     937 -
+     938 -            self.status_var.set(f"已加载: {filename}")
+     939 -
+     940 -        except Exception as e:
+     941 -            messagebox.showerror("错误", f"加载文章失败: {str(e)}")
+     942 -
+     943 -    def parse_markdown(self, content):
+     944 -        """解析Markdown文件的front matter和正文"""
+     945 -        front_matter = {}
+     946 -        body = content
+     947 -
+     948 -        if content.startswith('---'):
+     949 -            parts = content.split('---', 2)
+     950 -            if len(parts) >= 3:
+     951 -                front_matter_text = parts[1].strip()
+     952 -                body = parts[2].strip()
+     953 -
+     954 -                # Parse YAML-like front matter
+     955 -                for line in front_matter_text.split('\n'):
+     956 -                    if ':' in line:
+     957 -                        key, value = line.split(':', 1)
+     958 -                        key = key.strip()
+     959 -                        value = value.strip().strip('"\'')
+     960 -
+     961 -                        # Handle arrays
+     962 -                        if value.startswith('[') and value.endswith(']'):
+     963 -                            value = [item.strip().strip('"\'') for item in value[1:-1].split(',')]
+     964 -                        elif value.lower() in ['true', 'false']:
+     965 -                            value = value.lower() == 'true'
+     966 -
+     967 -                        front_matter[key] = value
+     968 -
+     969 -        return front_matter, body
+     970 -
+     971 -    def new_article(self):
+     972 -        """创建新文章"""
+     973 -        try:
+     974 -            print("Debug: Starting new_article")  # Debug info
+     975 -            dialog = ArticleDialog(self.root, "新建文章")
+     976 -            self.root.wait_window(dialog.dialog)  # Wait for dialog to close
+     977 -
+     978 -            print(f"Debug: Dialog result = {dialog.result}")  # Debug info
+     979 -
+     980 -            if dialog.result:
+     981 -                title, filename = dialog.result
+     982 -                print(f"Debug: Creating article '{title}' with filename '{filename}'")  # Debug info
+     983 -                self.status_var.set(f"正在创建文章: {title}")
+     984 -
+     985 -                # Create new article file
+     986 -                file_path = self.posts_path / f"{filename}.md"
+     987 -
+     988 -                if file_path.exists():
+     989 -                    messagebox.showerror("错误", "文件已存在")
+     990 -                    return
+     991 -
+     992 -                # Ensure posts directory exists
+     993 -                self.posts_path.mkdir(parents=True, exist_ok=True)
+     994 -
+     995 -                # Create front matter
+     996 -                now = datetime.datetime.now()
+     997 -                front_matter = f"""---
+     998 -title: "{title}"
+     999 -date: {now.strftime('%Y-%m-%dT%H:%M:%S+08:00')}
+    1000 -draft: true
+    1001 -author: "你的名字"
+    1002 -tags: []
+    1003 -categories: []
+    1004 -description: ""
+    1005 ----
+    1006 -
+    1007 -"""
+    1008 -
+    1009 -                try:
+    1010 -                    with open(file_path, 'w', encoding='utf-8') as f:
+    1011 -                        f.write(front_matter)
+    1012 -
+    1013 -                    self.refresh_articles()
+    1014 -                    self.load_article(f"{filename}.md")
+    1015 -                    self.status_var.set(f"已创建新文章: {filename}.md")
+    1016 -
+    1017 -                except Exception as e:
+    1018 -                    messagebox.showerror("错误", f"创建文章失败: {str(e)}")
+    1019 -            else:
+    1020 -                self.status_var.set("取消创建文章")
+    1021 -
+    1022 -        except Exception as e:
+    1023 -            messagebox.showerror("错误", f"新建文章对话框错误: {str(e)}")
+    1024 -            self.status_var.set("新建文章失败")
+    1025 -
+    1026 -    def save_article(self):
+    1027 -        """保存当前文章"""
+    1028 -        if not self.current_file:
+    1029 -            messagebox.showwarning("警告", "没有打开的文章")
+    1030 -            return
+    1031 -
+    1032 -        try:
+    1033 -            # Build front matter
+    1034 -            front_matter = {
+    1035 -                'title': self.title_var.get(),
+    1036 -                'tags': [tag.strip() for tag in self.tags_var.get().split(',') if tag.strip()],
+    1037 -                'categories': [cat.strip() for cat in self.categories_var.get().split(',') if cat.strip()],
+    1038 -                'draft': self.draft_var.get()
+    1039 -            }
+    1040 -
+    1041 -            # Read existing front matter to preserve other fields
+    1042 -            with open(self.current_file, 'r', encoding='utf-8') as f:
+    1043 -                existing_content = f.read()
+    1044 -
+    1045 -            existing_front_matter, _ = self.parse_markdown(existing_content)
+    1046 -            existing_front_matter.update(front_matter)
+    1047 -
+    1048 -            # Build new content
+    1049 -            content = "---\n"
+    1050 -            for key, value in existing_front_matter.items():
+    1051 -                if isinstance(value, list):
+    1052 -                    if value:  # Only add non-empty lists
+    1053 -                        formatted_list = '[' + ', '.join(f'"{item}"' for item in value) + ']'
+    1054 -                        content += f'{key}: {formatted_list}\n'
+    1055 -                elif isinstance(value, bool):
+    1056 -                    content += f'{key}: {str(value).lower()}\n'
+    1057 -                elif isinstance(value, str):
+    1058 -                    content += f'{key}: "{value}"\n'
+    1059 -                else:
+    1060 -                    content += f'{key}: {value}\n'
+    1061 -
+    1062 -            content += "---\n\n"
+    1063 -            content += self.text_editor.get(1.0, tk.END).rstrip()
+    1064 -
+    1065 -            with open(self.current_file, 'w', encoding='utf-8') as f:
+    1066 -                f.write(content)
+    1067 -
+    1068 -            self.status_var.set(f"已保存: {self.current_file.name}")
+    1069 -
+    1070 -        except Exception as e:
+    1071 -            messagebox.showerror("错误", f"保存失败: {str(e)}")
+    1072 -
+    1073 -    def preview_article(self):
+    1074 -        """预览文章"""
+    1075 -        if not self.current_file:
+    1076 -            messagebox.showwarning("警告", "没有打开的文章")
+    1077 -            return
+    1078 -
+    1079 -        try:
+    1080 -            # Get markdown content
+    1081 -            markdown_content = self.text_editor.get(1.0, tk.END)
+    1082 -
+    1083 -            # Convert to HTML
+    1084 -            md = markdown.Markdown(extensions=['extra', 'codehilite'])
+    1085 -            html_content = md.convert(markdown_content)
+    1086 -
+    1087 -            # Create a simple HTML template
+    1088 -            html_template = f"""
+    1089 -<!DOCTYPE html>
+    1090 -<html>
+    1091 -<head>
+    1092 -    <meta charset="utf-8">
+    1093 -    <title>{self.title_var.get()}</title>
+    1094 -    <style>
+    1095 -        body {{ font-family: 'Microsoft YaHei', Arial, sans-serif; line-height: 1.6; margin: 40px; }}
+    1096 -        h1, h2, h3 {{ color: #333; }}
+    1097 -        code {{ background: #f4f4f4; padding: 2px 4px; border-radius: 3px; }}
+    1098 -        pre {{ background: #f4f4f4; padding: 10px; border-radius: 5px; overflow-x: auto; }}
+    1099 -        blockquote {{ border-left: 4px solid #ddd; margin: 0; padding-left: 20px; color: #666; }}
+    1100 -    </style>
+    1101 -</head>
+    1102 -<body>
+    1103 -    <h1>{self.title_var.get()}</h1>
+    1104 -    {html_content}
+    1105 -</body>
+    1106 -</html>
+    1107 -"""
+    1108 -
+    1109 -            # Save to temporary file and open in browser
+    1110 -            with tempfile.NamedTemporaryFile(mode='w', suffix='.html', delete=False, encoding='utf-8') as f:
+    1111 -                f.write(html_template)
+    1112 -                temp_file = f.name
+    1113 -
+    1114 -            # Instead of opening in browser, we'll use internal preview
+    1115 -            self.update_preview()
+    1116 -            self.status_var.set("预览已更新")
+    1117 -
+    1118 -        except Exception as e:
+    1119 -            messagebox.showerror("错误", f"预览失败: {str(e)}")
+    1120 -
+    1121 -    def upload_blog(self):
+    1122 -        """上传博客 - 执行updateblog.bat"""
+    1123 -        if messagebox.askyesno("确认", "确定要构建并上传博客吗？\n这将执行hugo构建和git推送操作。"):
+    1124 -            try:
+    1125 -                # Change to blog directory and run updateblog.bat
+    1126 -                result = subprocess.run(
+    1127 -                    ['updateblog.bat'],
+    1128 -                    cwd=str(self.blog_path),
+    1129 -                    capture_output=True,
+    1130 -                    text=True,
+    1131 -                    shell=True
+    1132 -                )
+    1133 -
+    1134 -                if result.returncode == 0:
+    1135 -                    messagebox.showinfo("成功", "博客上传成功！")
+    1136 -                    self.status_var.set("博客上传完成")
+    1137 -                else:
+    1138 -                    messagebox.showerror("错误", f"上传失败:\n{result.stderr}")
+    1139 -                    self.status_var.set("博客上传失败")
+    1140 -
+    1141 -            except Exception as e:
+    1142 -                messagebox.showerror("错误", f"执行上传脚本失败: {str(e)}")
+    1143 -
+    1144 -    def upload_static_file(self):
+    1145 -        """上传静态文件"""
+    1146 -        files = filedialog.askopenfilenames(
+    1147 -            title="选择要上传的文件",
+    1148 -            filetypes=[("所有文件", "*.*"), ("图片文件", "*.jpg *.jpeg *.png *.gif *.svg")]
+    1149 -        )
+    1150 -
+    1151 -        if files:
+    1152 -            for file_path in files:
+    1153 -                try:
+    1154 -                    src = Path(file_path)
+    1155 -                    dst = self.static_path / src.name
+    1156 -                    shutil.copy2(src, dst)
+    1157 -                    self.status_var.set(f"已上传文件: {src.name}")
+    1158 -                except Exception as e:
+    1159 -                    messagebox.showerror("错误", f"上传文件失败: {str(e)}")
+    1160 -
+    1161 -            self.refresh_static_files()
+    1162 -
+    1163 -    def create_static_folder(self):
+    1164 -        """创建静态文件夹"""
+    1165 -        import tkinter.simpledialog as simpledialog
+    1166 -        folder_name = simpledialog.askstring("新建文件夹", "请输入文件夹名称:")
+    1167 -        if folder_name:
+    1168 -            try:
+    1169 -                folder_path = self.static_path / folder_name
+    1170 -                folder_path.mkdir(exist_ok=True)
+    1171 -                self.refresh_static_files()
+    1172 -                self.status_var.set(f"已创建文件夹: {folder_name}")
+    1173 -            except Exception as e:
+    1174 -                messagebox.showerror("错误", f"创建文件夹失败: {str(e)}")
+    1175 -
+    1176 -    def delete_static_item(self):
+    1177 -        """删除静态文件或文件夹"""
+    1178 -        selection = self.static_tree.selection()
+    1179 -        if not selection:
+    1180 -            messagebox.showwarning("警告", "请选择要删除的项目")
+    1181 -            return
+    1182 -
+    1183 -        if messagebox.askyesno("确认删除", "确定要删除选中的项目吗？"):
+    1184 -            # Implementation for deleting selected items
+    1185 -            self.refresh_static_files()
+    1186 -
+    1187 -    def reset_config(self):
+    1188 -        """重置配置文件"""
+    1189 -        if messagebox.askyesno("确认重置", "确定要重置配置文件吗？这将覆盖当前配置。"):
+    1190 -            default_config = '''baseURL = "https://example.com"
+    1191 -languageCode = "zh-cn"
+    1192 -title = "我的博客"
+    1193 -theme = "stack"
+    1194 -
+    1195 -[menu]
+    1196 -  [[menu.main]]
+    1197 -    name = "首页"
+    1198 -    url = "/"
+    1199 -    weight = 1
+    1200 -  [[menu.main]]
+    1201 -    name = "文章"
+    1202 -    url = "/posts/"
+    1203 -    weight = 2
+    1204 -  [[menu.main]]
+    1205 -    name = "关于"
+    1206 -    url = "/about/"
+    1207 -    weight = 3
+    1208 -
+    1209 -[markup]
+    1210 -  [markup.highlight]
+    1211 -    style = "github"
+    1212 -  [markup.goldmark]
+    1213 -    [markup.goldmark.renderer]
+    1214 -      unsafe = true
+    1215 -'''
+    1216 -            self.config_editor.delete(1.0, tk.END)
+    1217 -            self.config_editor.insert(1.0, default_config)
+    1218 -
+    1219 -    def new_theme_file(self):
+    1220 -        """新建主题文件"""
+    1221 -        import tkinter.simpledialog as simpledialog
+    1222 -        filename = simpledialog.askstring("新建主题文件", "请输入文件名 (如: layouts/index.html):")
+    1223 -        if filename:
+    1224 -            file_path = self.blog_path / filename
+    1225 -            file_path.parent.mkdir(parents=True, exist_ok=True)
+    1226 -
+    1227 -            # Create empty file
+    1228 -            with open(file_path, 'w', encoding='utf-8') as f:
+    1229 -                f.write('<!-- Hugo template file -->\n')
+    1230 -
+    1231 -            self.refresh_theme_files()
+    1232 -            self.load_theme_file(filename)
+    1233 -
+    1234 -
+    1235 -class ArticleDialog:
+    1236 -    def __init__(self, parent, title):
+    1237 -        self.result = None
+    1238 -        self.parent = parent
+    1239 -
+    1240 -        self.dialog = tk.Toplevel(parent)
+    1241 -        self.dialog.title(title)
+    1242 -        self.dialog.geometry("450x250")
+    1243 -        self.dialog.transient(parent)
+    1244 -        self.dialog.grab_set()
+    1245 -
+    1246 -        # Make dialog modal
+    1247 -        self.dialog.focus_set()
+    1248 -
+    1249 -        # Center the dialog
+    1250 -        self.dialog.geometry("+%d+%d" % (parent.winfo_rootx() + 50, parent.winfo_rooty() + 50))
+    1251 -
+    1252 -        self.create_widgets()
+    1253 -
+    1254 -        # Prevent closing with X button without setting result
+    1255 -        self.dialog.protocol("WM_DELETE_WINDOW", self.cancel_clicked)
+    1256 -
+    1257 -    def create_widgets(self):
+    1258 -        main_frame = ttk.Frame(self.dialog, padding=20)
+    1259 -        main_frame.pack(fill=tk.BOTH, expand=True)
+    1260 -
+    1261 -        # Title
+    1262 -        ttk.Label(main_frame, text="文章标题:").pack(anchor=tk.W)
+    1263 -        self.title_var = tk.StringVar()
+    1264 -        self.title_entry = ttk.Entry(main_frame, textvariable=self.title_var, width=40)
+    1265 -        self.title_entry.pack(fill=tk.X, pady=(5, 15))
+    1266 -        self.title_entry.focus()
+    1267 -
+    1268 -        # Filename
+    1269 -        ttk.Label(main_frame, text="文件名 (不含.md扩展名):").pack(anchor=tk.W)
+    1270 -        self.filename_var = tk.StringVar()
+    1271 -        self.filename_entry = ttk.Entry(main_frame, textvariable=self.filename_var, width=40)
+    1272 -        self.filename_entry.pack(fill=tk.X, pady=(5, 15))
+    1273 -
+    1274 -        # Auto-generate filename from title
+    1275 -        self.title_var.trace_add('write', self.update_filename)
+    1276 -
+    1277 -        # Buttons
+    1278 -        button_frame = ttk.Frame(main_frame)
+    1279 -        button_frame.pack(fill=tk.X, pady=(10, 0))
+    1280 -
+    1281 -        ttk.Button(button_frame, text="确定", command=self.ok_clicked).pack(side=tk.RIGHT, padx=(5, 0))
+    1282 -        ttk.Button(button_frame, text="取消", command=self.cancel_clicked).pack(side=tk.RIGHT)
+    1283 -
+    1284 -        # Bind Enter key
+    1285 -        self.dialog.bind('<Return>', lambda _: self.ok_clicked())
+    1286 -
+    1287 -    def update_filename(self, *args):
+    1288 -        """根据标题自动生成文件名"""
+    1289 -        title = self.title_var.get()
+    1290 -        # Convert to URL-friendly filename
+    1291 -        filename = re.sub(r'[^\w\s-]', '', title)
+    1292 -        filename = re.sub(r'[-\s]+', '-', filename).strip('-').lower()
+    1293 -        self.filename_var.set(filename)
+    1294 -
+    1295 -    def ok_clicked(self):
+    1296 -        try:
+    1297 -            title = self.title_var.get().strip()
+    1298 -            filename = self.filename_var.get().strip()
+    1299 -
+    1300 -            print(f"Debug: Title = '{title}', Filename = '{filename}'")  # Debug info
+    1301 -
+    1302 -            if not title:
+    1303 -                messagebox.showerror("错误", "请输入文章标题")
+    1304 -                return
+    1305 -
+    1306 -            if not filename:
+    1307 -                messagebox.showerror("错误", "请输入文件名")
+    1308 -                return
+    1309 -
+    1310 -            # Validate filename - allow Chinese characters and more characters
+    1311 -            if not re.match(r'^[a-zA-Z0-9_\u4e00-\u9fff-]+$', filename):
+    1312 -                messagebox.showerror("错误", "文件名只能包含字母、数字、中文、下划线和连字符")
+    1313 -                return
+    1314 -
+    1315 -            self.result = (title, filename)
+    1316 -            print(f"Debug: Setting result = {self.result}")  # Debug info
+    1319 -        except Exception as e:
+    1320 -            print(f"Debug: Error in ok_clicked: {e}")  # Debug info
+    1321 -            messagebox.showerror("错误", f"对话框处理错误: {str(e)}")
+    1322 -
+    1323 -    def cancel_clicked(self):
+    1324 -        self.dialog.destroy()
+    1325 -
+    1326 -
+    1327 -def main():
+    1328 -    root = tk.Tk()
+    1329 -    app = HugoManager(root)
+    1330 -    root.mainloop()
+    1331 -
+    1332 -
