@@ -6,7 +6,15 @@
         <description>Recent content in Tags on LiangYu Blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Fri, 27 Oct 2023 11:25:41 +0800</lastBuildDate><atom:link href="https://404not.work/tags/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Mon, 13 Apr 2026 00:45:48 +0800</lastBuildDate><atom:link href="https://404not.work/tags/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>日常</title>
+        <link>https://404not.work/tags/%E6%97%A5%E5%B8%B8/</link>
+        <pubDate>Mon, 13 Apr 2026 00:45:48 +0800</pubDate>
+        
+        <guid>https://404not.work/tags/%E6%97%A5%E5%B8%B8/</guid>
+        <description></description>
+        </item>
+        <item>
         <title>Hugo</title>
         <link>https://404not.work/tags/hugo/</link>
         <pubDate>Fri, 27 Oct 2023 11:25:41 +0800</pubDate>

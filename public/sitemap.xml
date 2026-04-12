@@ -2,25 +2,34 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>https://404not.work/posts/555/</loc>
-    <lastmod>2025-09-21T18:55:54+08:00</lastmod>
+    <loc>https://404not.work/categories/</loc>
+    <lastmod>2026-04-13T00:45:48+08:00</lastmod>
   </url><url>
     <loc>https://404not.work/</loc>
-    <lastmod>2025-09-21T18:55:54+08:00</lastmod>
+    <lastmod>2026-04-13T00:45:48+08:00</lastmod>
   </url><url>
     <loc>https://404not.work/posts/</loc>
+    <lastmod>2026-04-13T00:45:48+08:00</lastmod>
+  </url><url>
+    <loc>https://404not.work/tags/</loc>
+    <lastmod>2026-04-13T00:45:48+08:00</lastmod>
+  </url><url>
+    <loc>https://404not.work/categories/%E6%97%A5%E5%B8%B8/</loc>
+    <lastmod>2026-04-13T00:45:48+08:00</lastmod>
+  </url><url>
+    <loc>https://404not.work/tags/%E6%97%A5%E5%B8%B8/</loc>
+    <lastmod>2026-04-13T00:45:48+08:00</lastmod>
+  </url><url>
+    <loc>https://404not.work/posts/%E8%87%AA%E6%88%91%E4%BB%8B%E7%BB%8D/</loc>
+    <lastmod>2026-04-13T00:45:48+08:00</lastmod>
+  </url><url>
+    <loc>https://404not.work/posts/555/</loc>
     <lastmod>2025-09-21T18:55:54+08:00</lastmod>
   </url><url>
     <loc>https://404not.work/about/</loc>
     <lastmod>2023-10-27T11:25:41+08:00</lastmod>
   </url><url>
-    <loc>https://404not.work/categories/</loc>
-    <lastmod>2023-10-27T11:25:41+08:00</lastmod>
-  </url><url>
     <loc>https://404not.work/tags/hugo/</loc>
-    <lastmod>2023-10-27T11:25:41+08:00</lastmod>
-  </url><url>
-    <loc>https://404not.work/tags/</loc>
     <lastmod>2023-10-27T11:25:41+08:00</lastmod>
   </url><url>
     <loc>https://404not.work/posts/my-first-post/</loc>
