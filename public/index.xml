@@ -12,18 +12,43 @@
         <pubDate>Mon, 13 Apr 2026 00:45:48 +0800</pubDate>
         
         <guid>https://404not.work/posts/%E8%87%AA%E6%88%91%E4%BB%8B%E7%BB%8D/</guid>
-        <description>&lt;h1 id=&#34;这是简单的测试&#34;&gt;这是简单的测试
-&lt;/h1&gt;&lt;h2 id=&#34;副标题&#34;&gt;副标题
-&lt;/h2&gt;&lt;h3 id=&#34;小标题&#34;&gt;小标题
-&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;粗体&lt;/strong&gt;&lt;/p&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;print(&amp;#34;hello world&amp;#34;)
-&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;li&gt;2&lt;/li&gt;
-&lt;li&gt;2&lt;/li&gt;
-&lt;li&gt;&lt;/li&gt;
+        <description>&lt;h1 id=&#34;关于我&#34;&gt;关于我
+&lt;/h1&gt;&lt;p&gt;&lt;strong&gt;我叫&lt;/strong&gt;：LiangYu&lt;br&gt;
+&lt;strong&gt;身份&lt;/strong&gt;：ZQU 在读大学生&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;介绍介绍我&#34;&gt;介绍介绍我？
+&lt;/h2&gt;&lt;p&gt;小时候因为想搞游戏外挂，误打误撞入了逆向的门。&lt;br&gt;
+后来逐渐从单纯的“破解”转向更系统的技术研究。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;折腾过的东西&#34;&gt;折腾过的东西
+&lt;/h2&gt;&lt;h3 id=&#34;游戏相关逆向侧&#34;&gt;游戏相关（逆向侧）
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;生死狙击&lt;/li&gt;
+&lt;li&gt;鹅鸭杀&lt;/li&gt;
+&lt;li&gt;我的世界&lt;/li&gt;
+&lt;li&gt;腾讯系部分产品&lt;/li&gt;
 &lt;/ul&gt;
-</description>
+&lt;h3 id=&#34;防守侧&#34;&gt;防守侧
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;写过反作弊系统&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;正向--全栈&#34;&gt;正向 &amp;amp; 全栈
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;前后端开发&lt;/li&gt;
+&lt;li&gt;UI 编写&lt;/li&gt;
+&lt;li&gt;脚本系统编写（例如 x64dbg 的 Python Script 系统）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;赚钱之路&#34;&gt;赚钱之路
+&lt;/h2&gt;&lt;p&gt;发现爬虫能赚钱，于是自学爬虫，&lt;br&gt;
+靠这个赚到了人生第一桶金。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;目前状态&#34;&gt;目前状态
+&lt;/h2&gt;&lt;p&gt;方向不设限，喜欢从底层往上摸透一套东西的感觉。
+我可能在这个博客发一些我逆向的经历，或许回头看会比较有意思？或许是给技术面试官看的XD&lt;br&gt;
+持续折腾中。&lt;/p&gt;
+&lt;h2 id=&#34;此文章由hugo-manager编写并一键push到github-xd&#34;&gt;此文章由HUGO MANAGER编写并一键PUSH到GITHUB XD
+&lt;/h2&gt;</description>
         </item>
         <item>
         <title>555</title>
