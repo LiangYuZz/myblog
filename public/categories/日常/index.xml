@@ -12,7 +12,17 @@
         <pubDate>Mon, 13 Apr 2026 00:45:48 +0800</pubDate>
         
         <guid>https://404not.work/posts/%E8%87%AA%E6%88%91%E4%BB%8B%E7%BB%8D/</guid>
-        <description>&lt;p&gt;test&lt;/p&gt;
+        <description>&lt;h1 id=&#34;这是简单的测试&#34;&gt;这是简单的测试
+&lt;/h1&gt;&lt;h2 id=&#34;副标题&#34;&gt;副标题
+&lt;/h2&gt;&lt;h3 id=&#34;小标题&#34;&gt;小标题
+&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;粗体&lt;/strong&gt;&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;print(&amp;#34;hello world&amp;#34;)
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;li&gt;2&lt;/li&gt;
+&lt;li&gt;2&lt;/li&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ul&gt;
 </description>
         </item>
         
