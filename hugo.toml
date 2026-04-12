@@ -34,4 +34,7 @@ theme = 'stack'
       unsafe = true # 允许在markdown中使用HTML
 [params]
   [params.sidebar]
-    avatar = "img/avatar.jpg"
+    [params.sidebar.avatar]
+      enabled = true
+      local = true
+      src = "img/avatar.jpg"
