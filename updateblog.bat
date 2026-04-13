@@ -16,19 +16,20 @@ if errorlevel 1 (
 "%HUGO_EXE%"
 if errorlevel 1 exit /b %errorlevel%
 
-git -c safe.directory="%CD%" add . -- :!run_hugo_manager.bat :!hugo_manager.py
+git add . -- ":!run_hugo_manager.bat" ":!hugo_manager.py"
 if errorlevel 1 exit /b %errorlevel%
 
-git -c safe.directory="%CD%" diff --cached --quiet
-if not errorlevel 1 (
-    echo [INFO] No staged changes.
-    exit /b 0
-)
+git diff --cached --quiet
+if not errorlevel 1 goto has_changes
 
-git -c safe.directory="%CD%" commit -m "update %date:~0,4%-%date:~5,2%-%date:~8,2% %time:~0,2%%time:~3,2%"
+echo [INFO] No staged changes.
+exit /b 0
+
+:has_changes
+git commit -m "update %date:~0,4%-%date:~5,2%-%date:~8,2% %time:~0,2%%time:~3,2%"
 if errorlevel 1 exit /b %errorlevel%
 
-git -c safe.directory="%CD%" pull --rebase --autostash origin main
+git pull --rebase --autostash origin main
 if errorlevel 1 exit /b %errorlevel%
 
-git -c safe.directory="%CD%" push origin main
+git push origin main
