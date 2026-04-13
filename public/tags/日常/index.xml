@@ -27,7 +27,12 @@
 &lt;li&gt;生死狙击&lt;/li&gt;
 &lt;li&gt;鹅鸭杀&lt;/li&gt;
 &lt;li&gt;我的世界&lt;/li&gt;
-&lt;li&gt;腾讯系部分产品&lt;/li&gt;
+&lt;li&gt;X讯系部分产品&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;对抗相关&#34;&gt;对抗相关
+&lt;/h3&gt;&lt;ul&gt;
+&lt;li&gt;日开了X讯混元验证码（点选图形匹配的）&lt;/li&gt;
+&lt;li&gt;日开了X讯 Core Encryption(AES多层变种)&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h3 id=&#34;防守侧&#34;&gt;防守侧
 &lt;/h3&gt;&lt;ul&gt;
@@ -47,8 +52,17 @@
 &lt;hr&gt;
 &lt;h2 id=&#34;目前状态&#34;&gt;目前状态
 &lt;/h2&gt;&lt;p&gt;方向不设限，喜欢从底层往上摸透一套东西的感觉。
-我可能在这个博客发一些我逆向的经历，或许回头看会比较有意思？或许是给技术面试官看的XD&lt;br&gt;
-持续折腾中。&lt;/p&gt;
+我可能在这个博客发一些我逆向的经历，或许回头看会比较有意思？或许是给技术面试官看的XD&lt;/p&gt;
+&lt;h2 id=&#34;对计算机这个行业的看法&#34;&gt;对计算机这个行业的看法
+&lt;/h2&gt;&lt;p&gt;程序员总喜欢写一些淘汰程序员的东西，如MCP，各种Agents，Skills
+如今的LLM发展如冲天之龙，势必会淘汰古法编程，毕竟有了珍妮纺纱机之后，老老实实的工人只会被淘汰
+此文章编写时，anthropic已经搞出强于其opus4.6的产品了
+而熟练操作纺纱机的工人可能会被保留，但是避免不了大规模裁员（降本增效这块）
+现在的大趋势就是，大厂都在用VIBE CODING循环框架（AI写，AI审，自己搁那喝茶）
+这不是我自己&lt;strong&gt;胡说八道&lt;/strong&gt;的，这是我在X度，X里云的技术聊天时知道的
+值得庆幸的是，大厂并不在乎你那仨瓜俩枣每个月几千块钱或者说万把块钱的工资，领导仍然是下指令层而不是自学去淘汰我们这群VIBE CODING的家伙
+总而言之，我们会被降本增效，但不会被淘汰，领导需要的是能干活的，至于咋干的他不管，他没时间去自学vibe coding去抢我们那千把来块钱万把来块钱的工资。
+2026.04.13&lt;/p&gt;
 &lt;hr&gt;
 &lt;p&gt;由 LiangYu 的 Hugo Manager 编写并一键推送到 GitHub 上&lt;/p&gt;
 </description>
