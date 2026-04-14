@@ -1,11 +1,11 @@
 ---
 title: "关于MCP和SKILLS的一些看法"
 date: "2026-04-13T12:05:18+08:00"
-draft: true
+draft: false
 watermark: true
 author: "你的名字"
-tags: []
-categories: []
+tags: ["技术"]
+categories: ["技术"]
 description: ""
 ---
 

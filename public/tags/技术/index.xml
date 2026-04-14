@@ -2,11 +2,11 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
         <title>技术 on LiangYu Blog</title>
-        <link>https://404not.work/categories/%E6%8A%80%E6%9C%AF/</link>
+        <link>https://404not.work/tags/%E6%8A%80%E6%9C%AF/</link>
         <description>Recent content in 技术 on LiangYu Blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Tue, 14 Apr 2026 17:50:29 +0800</lastBuildDate><atom:link href="https://404not.work/categories/%E6%8A%80%E6%9C%AF/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Tue, 14 Apr 2026 17:50:29 +0800</lastBuildDate><atom:link href="https://404not.work/tags/%E6%8A%80%E6%9C%AF/index.xml" rel="self" type="application/rss+xml" /><item>
         <title>微信逆向浅谈</title>
         <link>https://404not.work/posts/%E5%BE%AE%E4%BF%A1%E9%80%86%E5%90%91%E6%B5%85%E8%B0%88/</link>
         <pubDate>Tue, 14 Apr 2026 17:50:29 +0800</pubDate>
@@ -152,34 +152,6 @@ A：下班了。后面有兴趣会继续说的。&lt;/p&gt;
         <guid>https://404not.work/posts/%E5%85%B3%E4%BA%8Emcp%E5%92%8Cskills%E7%9A%84%E4%B8%80%E4%BA%9B%E7%9C%8B%E6%B3%95/</guid>
         <description>&lt;h1 id=&#34;关于mcp和skills的一些看法&#34;&gt;关于MCP和SKILLS的一些看法
 &lt;/h1&gt;&lt;hr&gt;
-&lt;p&gt;由 LiangYu 的 Hugo Manager 编写并一键推送到 GitHub 上&lt;/p&gt;
-</description>
-        </item>
-        <item>
-        <title>about me</title>
-        <link>https://404not.work/about/</link>
-        <pubDate>Fri, 27 Oct 2023 11:25:41 +0800</pubDate>
-        
-        <guid>https://404not.work/about/</guid>
-        <description>&lt;p&gt;Welcome to my blog!!!&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;&lt;strong&gt;just A University student&lt;/strong&gt;&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;这是我的俩个Github账号，也许会有一些有意思的项目发布在上面&lt;/p&gt;
-&lt;p&gt;至于为什么是俩个账号，是因为之前有&lt;em&gt;&lt;strong&gt;学生活动&lt;/strong&gt;&lt;/em&gt;，多个账号都可以享受&lt;/p&gt;
-&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/LiangYuZz&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;https://github.com/LiangYuZz&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/Chinaplayerlunqt&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;https://github.com/Chinaplayerlunqt&lt;/a&gt;&lt;/p&gt;
-&lt;hr&gt;
-</description>
-        </item>
-        <item>
-        <title>我的第一篇文章</title>
-        <link>https://404not.work/posts/my-first-post/</link>
-        <pubDate>Fri, 27 Oct 2023 11:25:41 +0800</pubDate>
-        
-        <guid>https://404not.work/posts/my-first-post/</guid>
-        <description>&lt;p&gt;&lt;strong&gt;你好世界，这是一个测试，我可能会在这个博客发布一些或有营养或无营养的内容，这可能对我日后思考自己的来时路，或者找工作有所帮助，仅此而已。&lt;/strong&gt;&lt;/p&gt;
-&lt;hr&gt;
 &lt;p&gt;由 LiangYu 的 Hugo Manager 编写并一键推送到 GitHub 上&lt;/p&gt;
 </description>
         </item>

@@ -6,7 +6,156 @@
         <description>Recent content in Posts on LiangYu Blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Mon, 13 Apr 2026 00:45:48 +0800</lastBuildDate><atom:link href="https://404not.work/posts/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Tue, 14 Apr 2026 17:50:29 +0800</lastBuildDate><atom:link href="https://404not.work/posts/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>微信逆向浅谈</title>
+        <link>https://404not.work/posts/%E5%BE%AE%E4%BF%A1%E9%80%86%E5%90%91%E6%B5%85%E8%B0%88/</link>
+        <pubDate>Tue, 14 Apr 2026 17:50:29 +0800</pubDate>
+        
+        <guid>https://404not.work/posts/%E5%BE%AE%E4%BF%A1%E9%80%86%E5%90%91%E6%B5%85%E8%B0%88/</guid>
+        <description>&lt;h1 id=&#34;微信逆向浅谈&#34;&gt;微信逆向浅谈
+&lt;/h1&gt;&lt;h2 id=&#34;因公司需求需要造一款微信机器人&#34;&gt;因公司需求，需要造一款微信机器人
+&lt;/h2&gt;&lt;p&gt;作为编程佬，原则是：&lt;strong&gt;能在 GitHub 上找，就在 GitHub 上找&lt;/strong&gt;。&lt;br&gt;
+搜了一圈，确实有一些结果。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;之前稍有了解：微信协议基本没人能逆开，大多是通过 Hook 或 RPA 自动操作实现。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;img src=&#34;https://404not.work/uploads/posts/%e5%be%ae%e4%bf%a1%e9%80%86%e5%90%91%e6%b5%85%e8%b0%88/20260414-175335.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;微信逆向浅谈&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;结果发现，不是被和谐，就是远古遗产，比化石还稀有。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;南山必胜客，你懂的。&lt;/strong&gt;&lt;br&gt;
+所以笔者仅提供思路，&lt;strong&gt;抛砖引玉&lt;/strong&gt;，各位请自己保重。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;看到一个“新”的，结果……&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://404not.work/uploads/posts/%e5%be%ae%e4%bf%a1%e9%80%86%e5%90%91%e6%b5%85%e8%b0%88/20260414-175743.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;微信逆向浅谈&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;我滴天呐，我一个穷学生，800 块钱？不如把我命拿去。&lt;br&gt;
+如果跟老板讲，老板肯定说：那为什么不直接找他买？&lt;/p&gt;
+&lt;p&gt;于是决定 &lt;strong&gt;自研&lt;/strong&gt;。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;机器人核心需求&#34;&gt;机器人核心需求
+&lt;/h2&gt;&lt;p&gt;机器人唯一需要的两个元素就是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;接收消息&lt;/li&gt;
+&lt;li&gt;发送消息&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;我不是开发者，所以只能 &lt;strong&gt;逆向&lt;/strong&gt;。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;流程&#34;&gt;流程
+&lt;/h2&gt;&lt;p&gt;注意到 &lt;code&gt;weixin.exe&lt;/code&gt; 仅几 MB，可以断定核心逻辑在 &lt;code&gt;weixin.dll&lt;/code&gt; 中。&lt;br&gt;
+但 &lt;code&gt;weixin.dll&lt;/code&gt; 一百多 MB，用 IDA Pro 导入，我这轻薄本怕是要加载爆了。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://404not.work/uploads/posts/%e5%be%ae%e4%bf%a1%e9%80%86%e5%90%91%e6%b5%85%e8%b0%88/20260414-180249.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;微信逆向浅谈&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;于是开始寻思 &lt;strong&gt;歪门邪道&lt;/strong&gt;。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;突破口内存搜索&#34;&gt;突破口：内存搜索
+&lt;/h2&gt;&lt;p&gt;中文文本在内存中的编码有多种。&lt;br&gt;
+用小号发个文本过来，然后进行内存搜索，看看地址旁有什么规律。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://404not.work/uploads/posts/%e5%be%ae%e4%bf%a1%e9%80%86%e5%90%91%e6%b5%85%e8%b0%88/20260414-180138.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;微信逆向浅谈&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;这一搜不要紧，哟呵，规律不就出来了吗？
+Encoding: UTF-8
+Address: 0x16BFEFACE41
+Region Base: 0x16BFEEDA000 Size: 0x129000 Protect: 0x4&lt;/p&gt;
+&lt;p&gt;HEX:
+6A 6C 73 39 7C 76 31 5F 42 79 44 70 57 39 6A 58 3C 2F 73 69 67 6E 61 74 75 72 65 3E 0A 09 3C 74
+6D 70 5F 6E 6F 64 65 3E 0A 09 09 3C 70 75 62 6C 69 73 68 65 72 2D 69 64 3E 3C 2F 70 75 62 6C 69
+73 68 65 72 2D 69 64 3E 0A 09 3C 2F 74 6D 70 5F 6E 6F 64 65 3E 0A 3C 2F 6D 73 67 73 6F 75 72 63
+65 3E 0A 5A 21 E7 8E 8B E7 94 9F EF BC 88 E5 91 98 E5 B2 97 E8 80 81 E6 9D BF EF BC 89 20 3A 20
+E4 BD A0 E5 A5 BD 60 AF 9F BE F4 C3 AE A9 89 0D 68 C9 F2 DC 86 03 72 02 08 00 78 00 18 80 02 22
+F0 02 08 EA 02 12 EA 02 08 2F 12 08 08 01 10 F5 80 FB A4 03 12 04 08 65 10 00 12 08 08 02 10 C9
+F2 DC 86 03 12 04 08 66 10 00 12 04 08 0D 10 00 12 05 08 CC 01 10 00 12 08 08 03 10 AE 81 FB A4
+03 12 04 08 67 10 00 12 08 08 0B 10 B8 81 FB A4 03 12 04 08 6F 10 00 12 04 08 04 10 00 12 04 08
+68 10 00 12 04 08&lt;/p&gt;
+&lt;p&gt;TEXT:
+jls9|v1_ByDpW9jX&lt;/signature&gt;..&amp;lt;tmp_node&amp;gt;&amp;hellip;&lt;publisher-id&gt;&lt;/publisher-id&gt;..&amp;lt;/tmp_node&amp;gt;.&lt;/msgsource&gt;.Z!测试号 : 你好`����î��.h��܆.r&amp;hellip;x..�.&amp;quot;�..�..�../&amp;hellip;..����&amp;hellip;.e&amp;hellip;&amp;hellip;.��܆&amp;hellip;.f&amp;hellip;&amp;hellip;&amp;hellip;..�&amp;hellip;&amp;hellip;..����&amp;hellip;.g&amp;hellip;&amp;hellip;.����&amp;hellip;.o&amp;hellip;&amp;hellip;&amp;hellip;..h&amp;hellip;..&lt;/p&gt;
+&lt;p&gt;text&lt;/p&gt;
+&lt;p&gt;发现规律：&lt;br&gt;
+&lt;code&gt;ZX脏字符 + 账号名 + 内容 + XXX脏字符&lt;/code&gt;，前面还带个 XML 格式。&lt;br&gt;
+不小心一正则……&lt;/p&gt;
+&lt;p&gt;哎呀，就出来了。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://404not.work/uploads/posts/%e5%be%ae%e4%bf%a1%e9%80%86%e5%90%91%e6%b5%85%e8%b0%88/20260414-180611.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;微信逆向浅谈&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;接收消息&lt;/strong&gt; ✅&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;发送消息的波折&#34;&gt;发送消息的波折
+&lt;/h2&gt;&lt;p&gt;笔者用 x64dbg 一路追踪，发现参数全是加密的，于是只好放弃（其实是 &lt;strong&gt;下班时间快到了&lt;/strong&gt;）。&lt;/p&gt;
+&lt;p&gt;赶工方案：使用 &lt;code&gt;pyweixin&lt;/code&gt; 库进行发送消息。&lt;/p&gt;
+&lt;p&gt;于是，如你所见，一个简单的机器人就出来了。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://404not.work/uploads/posts/%e5%be%ae%e4%bf%a1%e9%80%86%e5%90%91%e6%b5%85%e8%b0%88/20260414-180726.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;微信逆向浅谈&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;qa-环节&#34;&gt;QA 环节
+&lt;/h2&gt;&lt;p&gt;&lt;strong&gt;Q：为什么不直接用 pyweixin 读消息，非要自己折腾？&lt;/strong&gt;&lt;br&gt;
+A：点来点去找新消息，你电脑不用了吗？而且效率跟乌龟一样。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Q：为什么不继续捣鼓发送消息？&lt;/strong&gt;&lt;br&gt;
+A：下班了。后面有兴趣会继续说的。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;code&gt;20260414&lt;/code&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;hr&gt;
+&lt;p&gt;由 LiangYu 的 Hugo Manager 编写并一键推送到 GitHub 上&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>关于MCP和SKILLS的一些看法</title>
+        <link>https://404not.work/posts/%E5%85%B3%E4%BA%8Emcp%E5%92%8Cskills%E7%9A%84%E4%B8%80%E4%BA%9B%E7%9C%8B%E6%B3%95/</link>
+        <pubDate>Mon, 13 Apr 2026 12:05:18 +0800</pubDate>
+        
+        <guid>https://404not.work/posts/%E5%85%B3%E4%BA%8Emcp%E5%92%8Cskills%E7%9A%84%E4%B8%80%E4%BA%9B%E7%9C%8B%E6%B3%95/</guid>
+        <description>&lt;h1 id=&#34;关于mcp和skills的一些看法&#34;&gt;关于MCP和SKILLS的一些看法
+&lt;/h1&gt;&lt;hr&gt;
+&lt;p&gt;由 LiangYu 的 Hugo Manager 编写并一键推送到 GitHub 上&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>自我介绍</title>
         <link>https://404not.work/posts/%E8%87%AA%E6%88%91%E4%BB%8B%E7%BB%8D/</link>
         <pubDate>Mon, 13 Apr 2026 00:45:48 +0800</pubDate>

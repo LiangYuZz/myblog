@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="微信逆向浅谈\r因公司需求，需要造一款微信机器人\r作为编程佬，原则是：能在 GitHub 上找，就在 GitHub 上找。\n搜了一圈，确实有一些结果。\n之前稍有了解：微信协议基本没人能逆开，大多是通过 Hook 或 RPA 自动操作实现。\n结果发现，不是被和谐，就是远古遗产，比化石还稀有。\n南山必胜客，你懂的。\n所以笔者仅提供思路，抛砖引玉，各位请自己保重。\n看到一个“新”的，结果……\n我滴天呐，我一个穷学生，800 块钱？不如把我命拿去。\n如果跟老板讲，老板肯定说：那为什么不直接找他买？\n于是决定 自研。\n机器人核心需求\r机器人唯一需要的两个元素就是：\n接收消息 发送消息 我不是开发者，所以只能 逆向。\n流程\r注意到 weixin.exe 仅几 MB，可以断定核心逻辑在 weixin.dll 中。\n但 weixin.dll 一百多 MB，用 IDA Pro 导入，我这轻薄本怕是要加载爆了。\n于是开始寻思 歪门邪道。\n突破口：内存搜索\r中文文本在内存中的编码有多种。\n用小号发个文本过来，然后进行内存搜索，看看地址旁有什么规律。\n这一搜不要紧，哟呵，规律不就出来了吗？ Encoding: UTF-8 Address: 0x16BFEFACE41 Region Base: 0x16BFEEDA000 Size: 0x129000 Protect: 0x4\nHEX: 6A 6C 73 39 7C 76 31 5F 42 79 44 70 57 39 6A 58 3C 2F 73 69 67 6E 61 74 75 72 65 3E 0A 09 3C 74 6D 70 5F 6E 6F 64 65 3E 0A 09 09 3C 70 75 62 6C 69 73 68 65 72 2D 69 64 3E 3C 2F 70 75 62 6C 69 73 68 65 72 2D 69 64 3E 0A 09 3C 2F 74 6D 70 5F 6E 6F 64 65 3E 0A 3C 2F 6D 73 67 73 6F 75 72 63 65 3E 0A 5A 21 E7 8E 8B E7 94 9F EF BC 88 E5 91 98 E5 B2 97 E8 80 81 E6 9D BF EF BC 89 20 3A 20 E4 BD A0 E5 A5 BD 60 AF 9F BE F4 C3 AE A9 89 0D 68 C9 F2 DC 86 03 72 02 08 00 78 00 18 80 02 22 F0 02 08 EA 02 12 EA 02 08 2F 12 08 08 01 10 F5 80 FB A4 03 12 04 08 65 10 00 12 08 08 02 10 C9 F2 DC 86 03 12 04 08 66 10 00 12 04 08 0D 10 00 12 05 08 CC 01 10 00 12 08 08 03 10 AE 81 FB A4 03 12 04 08 67 10 00 12 08 08 0B 10 B8 81 FB A4 03 12 04 08 6F 10 00 12 04 08 04 10 00 12 04 08 68 10 00 12 04 08\n">
+<title>微信逆向浅谈</title>
+
+<link rel='canonical' href='https://404not.work/posts/%E5%BE%AE%E4%BF%A1%E9%80%86%E5%90%91%E6%B5%85%E8%B0%88/'>
+
+<link rel="stylesheet" href="/scss/style.min.b1a5b48e9268da293f0e82d09fd1299e5ecbd5ea47ba1f408b3687d520ce0c2b.css"><meta property='og:title' content="微信逆向浅谈">
+<meta property='og:description' content="微信逆向浅谈\r因公司需求，需要造一款微信机器人\r作为编程佬，原则是：能在 GitHub 上找，就在 GitHub 上找。\n搜了一圈，确实有一些结果。\n之前稍有了解：微信协议基本没人能逆开，大多是通过 Hook 或 RPA 自动操作实现。\n结果发现，不是被和谐，就是远古遗产，比化石还稀有。\n南山必胜客，你懂的。\n所以笔者仅提供思路，抛砖引玉，各位请自己保重。\n看到一个“新”的，结果……\n我滴天呐，我一个穷学生，800 块钱？不如把我命拿去。\n如果跟老板讲，老板肯定说：那为什么不直接找他买？\n于是决定 自研。\n机器人核心需求\r机器人唯一需要的两个元素就是：\n接收消息 发送消息 我不是开发者，所以只能 逆向。\n流程\r注意到 weixin.exe 仅几 MB，可以断定核心逻辑在 weixin.dll 中。\n但 weixin.dll 一百多 MB，用 IDA Pro 导入，我这轻薄本怕是要加载爆了。\n于是开始寻思 歪门邪道。\n突破口：内存搜索\r中文文本在内存中的编码有多种。\n用小号发个文本过来，然后进行内存搜索，看看地址旁有什么规律。\n这一搜不要紧，哟呵，规律不就出来了吗？ Encoding: UTF-8 Address: 0x16BFEFACE41 Region Base: 0x16BFEEDA000 Size: 0x129000 Protect: 0x4\nHEX: 6A 6C 73 39 7C 76 31 5F 42 79 44 70 57 39 6A 58 3C 2F 73 69 67 6E 61 74 75 72 65 3E 0A 09 3C 74 6D 70 5F 6E 6F 64 65 3E 0A 09 09 3C 70 75 62 6C 69 73 68 65 72 2D 69 64 3E 3C 2F 70 75 62 6C 69 73 68 65 72 2D 69 64 3E 0A 09 3C 2F 74 6D 70 5F 6E 6F 64 65 3E 0A 3C 2F 6D 73 67 73 6F 75 72 63 65 3E 0A 5A 21 E7 8E 8B E7 94 9F EF BC 88 E5 91 98 E5 B2 97 E8 80 81 E6 9D BF EF BC 89 20 3A 20 E4 BD A0 E5 A5 BD 60 AF 9F BE F4 C3 AE A9 89 0D 68 C9 F2 DC 86 03 72 02 08 00 78 00 18 80 02 22 F0 02 08 EA 02 12 EA 02 08 2F 12 08 08 01 10 F5 80 FB A4 03 12 04 08 65 10 00 12 08 08 02 10 C9 F2 DC 86 03 12 04 08 66 10 00 12 04 08 0D 10 00 12 05 08 CC 01 10 00 12 08 08 03 10 AE 81 FB A4 03 12 04 08 67 10 00 12 08 08 0B 10 B8 81 FB A4 03 12 04 08 6F 10 00 12 04 08 04 10 00 12 04 08 68 10 00 12 04 08\n">
+<meta property='og:url' content='https://404not.work/posts/%E5%BE%AE%E4%BF%A1%E9%80%86%E5%90%91%E6%B5%85%E8%B0%88/'>
+<meta property='og:site_name' content='LiangYu Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='技术' /><meta property='article:tag' content='逆向' /><meta property='article:published_time' content='2026-04-14T17:50:29&#43;08:00'/><meta property='article:modified_time' content='2026-04-14T17:50:29&#43;08:00'/>
+<meta name="twitter:title" content="微信逆向浅谈">
+<meta name="twitter:description" content="微信逆向浅谈\r因公司需求，需要造一款微信机器人\r作为编程佬，原则是：能在 GitHub 上找，就在 GitHub 上找。\n搜了一圈，确实有一些结果。\n之前稍有了解：微信协议基本没人能逆开，大多是通过 Hook 或 RPA 自动操作实现。\n结果发现，不是被和谐，就是远古遗产，比化石还稀有。\n南山必胜客，你懂的。\n所以笔者仅提供思路，抛砖引玉，各位请自己保重。\n看到一个“新”的，结果……\n我滴天呐，我一个穷学生，800 块钱？不如把我命拿去。\n如果跟老板讲，老板肯定说：那为什么不直接找他买？\n于是决定 自研。\n机器人核心需求\r机器人唯一需要的两个元素就是：\n接收消息 发送消息 我不是开发者，所以只能 逆向。\n流程\r注意到 weixin.exe 仅几 MB，可以断定核心逻辑在 weixin.dll 中。\n但 weixin.dll 一百多 MB，用 IDA Pro 导入，我这轻薄本怕是要加载爆了。\n于是开始寻思 歪门邪道。\n突破口：内存搜索\r中文文本在内存中的编码有多种。\n用小号发个文本过来，然后进行内存搜索，看看地址旁有什么规律。\n这一搜不要紧，哟呵，规律不就出来了吗？ Encoding: UTF-8 Address: 0x16BFEFACE41 Region Base: 0x16BFEEDA000 Size: 0x129000 Protect: 0x4\nHEX: 6A 6C 73 39 7C 76 31 5F 42 79 44 70 57 39 6A 58 3C 2F 73 69 67 6E 61 74 75 72 65 3E 0A 09 3C 74 6D 70 5F 6E 6F 64 65 3E 0A 09 09 3C 70 75 62 6C 69 73 68 65 72 2D 69 64 3E 3C 2F 70 75 62 6C 69 73 68 65 72 2D 69 64 3E 0A 09 3C 2F 74 6D 70 5F 6E 6F 64 65 3E 0A 3C 2F 6D 73 67 73 6F 75 72 63 65 3E 0A 5A 21 E7 8E 8B E7 94 9F EF BC 88 E5 91 98 E5 B2 97 E8 80 81 E6 9D BF EF BC 89 20 3A 20 E4 BD A0 E5 A5 BD 60 AF 9F BE F4 C3 AE A9 89 0D 68 C9 F2 DC 86 03 72 02 08 00 78 00 18 80 02 22 F0 02 08 EA 02 12 EA 02 08 2F 12 08 08 01 10 F5 80 FB A4 03 12 04 08 65 10 00 12 08 08 02 10 C9 F2 DC 86 03 12 04 08 66 10 00 12 04 08 0D 10 00 12 05 08 CC 01 10 00 12 08 08 03 10 AE 81 FB A4 03 12 04 08 67 10 00 12 08 08 0B 10 B8 81 FB A4 03 12 04 08 6F 10 00 12 04 08 04 10 00 12 04 08 68 10 00 12 04 08\n">
+      <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+      <script>
+        var doNotTrack = false;
+        if ( true ) {
+          var dnt = (navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack);
+          var doNotTrack = (dnt == "1" || dnt == "yes");
+        }
+        if (!doNotTrack) {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-XXXXXXXXXX');
+        }
+      </script>
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column compact"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_33d77a68c6899868.jpg" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">LiangYu Blog</a></h1>
+            <h2 class="site-description"></h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                <span>首页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/posts/' >
+                
+                
+                
+                <span>文章</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/about/' >
+                
+                
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/categories/%E6%8A%80%E6%9C%AF/" >
+                技术
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/posts/%E5%BE%AE%E4%BF%A1%E9%80%86%E5%90%91%E6%B5%85%E8%B0%88/">微信逆向浅谈</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">Apr 14, 2026</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    阅读时长: 2 分钟
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="微信逆向浅谈">微信逆向浅谈
+</h1><h2 id="因公司需求需要造一款微信机器人">因公司需求，需要造一款微信机器人
+</h2><p>作为编程佬，原则是：<strong>能在 GitHub 上找，就在 GitHub 上找</strong>。<br>
+搜了一圈，确实有一些结果。</p>
+<blockquote>
+<p>之前稍有了解：微信协议基本没人能逆开，大多是通过 Hook 或 RPA 自动操作实现。</p>
+</blockquote>
+<p><img src="/uploads/posts/%e5%be%ae%e4%bf%a1%e9%80%86%e5%90%91%e6%b5%85%e8%b0%88/20260414-175335.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="微信逆向浅谈"
+	
+	
+></p>
+<p>结果发现，不是被和谐，就是远古遗产，比化石还稀有。</p>
+<p><strong>南山必胜客，你懂的。</strong><br>
+所以笔者仅提供思路，<strong>抛砖引玉</strong>，各位请自己保重。</p>
+<hr>
+<p>看到一个“新”的，结果……</p>
+<p><img src="/uploads/posts/%e5%be%ae%e4%bf%a1%e9%80%86%e5%90%91%e6%b5%85%e8%b0%88/20260414-175743.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="微信逆向浅谈"
+	
+	
+></p>
+<p>我滴天呐，我一个穷学生，800 块钱？不如把我命拿去。<br>
+如果跟老板讲，老板肯定说：那为什么不直接找他买？</p>
+<p>于是决定 <strong>自研</strong>。</p>
+<hr>
+<h2 id="机器人核心需求">机器人核心需求
+</h2><p>机器人唯一需要的两个元素就是：</p>
+<ul>
+<li>接收消息</li>
+<li>发送消息</li>
+</ul>
+<p>我不是开发者，所以只能 <strong>逆向</strong>。</p>
+<hr>
+<h2 id="流程">流程
+</h2><p>注意到 <code>weixin.exe</code> 仅几 MB，可以断定核心逻辑在 <code>weixin.dll</code> 中。<br>
+但 <code>weixin.dll</code> 一百多 MB，用 IDA Pro 导入，我这轻薄本怕是要加载爆了。</p>
+<p><img src="/uploads/posts/%e5%be%ae%e4%bf%a1%e9%80%86%e5%90%91%e6%b5%85%e8%b0%88/20260414-180249.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="微信逆向浅谈"
+	
+	
+></p>
+<p>于是开始寻思 <strong>歪门邪道</strong>。</p>
+<hr>
+<h2 id="突破口内存搜索">突破口：内存搜索
+</h2><p>中文文本在内存中的编码有多种。<br>
+用小号发个文本过来，然后进行内存搜索，看看地址旁有什么规律。</p>
+<p><img src="/uploads/posts/%e5%be%ae%e4%bf%a1%e9%80%86%e5%90%91%e6%b5%85%e8%b0%88/20260414-180138.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="微信逆向浅谈"
+	
+	
+></p>
+<p>这一搜不要紧，哟呵，规律不就出来了吗？
+Encoding: UTF-8
+Address: 0x16BFEFACE41
+Region Base: 0x16BFEEDA000 Size: 0x129000 Protect: 0x4</p>
+<p>HEX:
+6A 6C 73 39 7C 76 31 5F 42 79 44 70 57 39 6A 58 3C 2F 73 69 67 6E 61 74 75 72 65 3E 0A 09 3C 74
+6D 70 5F 6E 6F 64 65 3E 0A 09 09 3C 70 75 62 6C 69 73 68 65 72 2D 69 64 3E 3C 2F 70 75 62 6C 69
+73 68 65 72 2D 69 64 3E 0A 09 3C 2F 74 6D 70 5F 6E 6F 64 65 3E 0A 3C 2F 6D 73 67 73 6F 75 72 63
+65 3E 0A 5A 21 E7 8E 8B E7 94 9F EF BC 88 E5 91 98 E5 B2 97 E8 80 81 E6 9D BF EF BC 89 20 3A 20
+E4 BD A0 E5 A5 BD 60 AF 9F BE F4 C3 AE A9 89 0D 68 C9 F2 DC 86 03 72 02 08 00 78 00 18 80 02 22
+F0 02 08 EA 02 12 EA 02 08 2F 12 08 08 01 10 F5 80 FB A4 03 12 04 08 65 10 00 12 08 08 02 10 C9
+F2 DC 86 03 12 04 08 66 10 00 12 04 08 0D 10 00 12 05 08 CC 01 10 00 12 08 08 03 10 AE 81 FB A4
+03 12 04 08 67 10 00 12 08 08 0B 10 B8 81 FB A4 03 12 04 08 6F 10 00 12 04 08 04 10 00 12 04 08
+68 10 00 12 04 08</p>
+<p>TEXT:
+jls9|v1_ByDpW9jX</signature>..&lt;tmp_node&gt;&hellip;<publisher-id></publisher-id>..&lt;/tmp_node&gt;.</msgsource>.Z!测试号 : 你好`����î��.h��܆.r&hellip;x..�.&quot;�..�..�../&hellip;..����&hellip;.e&hellip;&hellip;.��܆&hellip;.f&hellip;&hellip;&hellip;..�&hellip;&hellip;..����&hellip;.g&hellip;&hellip;.����&hellip;.o&hellip;&hellip;&hellip;..h&hellip;..</p>
+<p>text</p>
+<p>发现规律：<br>
+<code>ZX脏字符 + 账号名 + 内容 + XXX脏字符</code>，前面还带个 XML 格式。<br>
+不小心一正则……</p>
+<p>哎呀，就出来了。</p>
+<p><img src="/uploads/posts/%e5%be%ae%e4%bf%a1%e9%80%86%e5%90%91%e6%b5%85%e8%b0%88/20260414-180611.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="微信逆向浅谈"
+	
+	
+></p>
+<p><strong>接收消息</strong> ✅</p>
+<hr>
+<h2 id="发送消息的波折">发送消息的波折
+</h2><p>笔者用 x64dbg 一路追踪，发现参数全是加密的，于是只好放弃（其实是 <strong>下班时间快到了</strong>）。</p>
+<p>赶工方案：使用 <code>pyweixin</code> 库进行发送消息。</p>
+<p>于是，如你所见，一个简单的机器人就出来了。</p>
+<p><img src="/uploads/posts/%e5%be%ae%e4%bf%a1%e9%80%86%e5%90%91%e6%b5%85%e8%b0%88/20260414-180726.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="微信逆向浅谈"
+	
+	
+></p>
+<hr>
+<h2 id="qa-环节">QA 环节
+</h2><p><strong>Q：为什么不直接用 pyweixin 读消息，非要自己折腾？</strong><br>
+A：点来点去找新消息，你电脑不用了吗？而且效率跟乌龟一样。</p>
+<p><strong>Q：为什么不继续捣鼓发送消息？</strong><br>
+A：下班了。后面有兴趣会继续说的。</p>
+<hr>
+<p><code>20260414</code></p>
+<hr>
+<hr>
+<p>由 LiangYu 的 Hugo Manager 编写并一键推送到 GitHub 上</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/%E6%8A%80%E6%9C%AF/">技术</a>
+        
+            <a href="/tags/%E9%80%86%E5%90%91/">逆向</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/posts/%E5%85%B3%E4%BA%8Emcp%E5%92%8Cskills%E7%9A%84%E4%B8%80%E4%BA%9B%E7%9C%8B%E6%B3%95/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">关于MCP和SKILLS的一些看法</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2026 LiangYu Blog
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.31.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.1e9a3bafd846ced4c345d084b355fb8c7bae75701c338f8a1f8a82c780137826.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
