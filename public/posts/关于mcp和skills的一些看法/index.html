@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="关于MCP和SKILLS的一些看法\r由 LiangYu 的 Hugo Manager 编写并一键推送到 GitHub 上\n">
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="关于 MCP 和 SKILLS 的一些看法\r前言\r众所周知，anthropic搞出了两套很有意思的协议：MCP 和 SKILLS\n一句话概括\rMCP 像 API，SKILLS 像说明书。\n它们作用相近，但一个是 精确定义，一个是 灵活范化。\nMCP：机器优先的“精确接口”\rMCP（Model Context Protocol）说白了就是 给 AI 用的 API。\n和你平时调用的天气 API 没啥两样——唯一区别是：调用方式被写进了提示词，告诉 AI “你可以这么用”。\n工作流程\r开发者定义好工具/接口 通过提示词注入，告知 LLM 调用规范 LLM 按约定格式（如 JSON）返回调用请求 外部执行并返回结果 举个栗子\r你想让 AI 调用一个天气 API：\n传统 API 调用是这样的 curl &ldquo;https://api.weather.com/today?city=beijing\"\n// MCP 方式：AI 返回特定格式（其实就是规定好LLM要返回啥） 我举个例子哈 这是你的prompt： 你好，你是个聊天机器人，我给你开放了一个tool，天气tool，如果你需要调用，则以json格式返回以下内容 其中city为城市名 { &ldquo;tool_call&rdquo;: &ldquo;weather_api&rdquo;, &ldquo;parameters&rdquo;: { &ldquo;city&rdquo;: &ldquo;XXX&rdquo; } } 然后AI就能自由的 “调用” TOOL了（其实就是返回一段指定格式的文本，然后你写个解析器去解析，然后联网操作什么的）\n">
 <title>关于MCP和SKILLS的一些看法</title>
 
 <link rel='canonical' href='https://404not.work/posts/%E5%85%B3%E4%BA%8Emcp%E5%92%8Cskills%E7%9A%84%E4%B8%80%E4%BA%9B%E7%9C%8B%E6%B3%95/'>
 
 <link rel="stylesheet" href="/scss/style.min.b1a5b48e9268da293f0e82d09fd1299e5ecbd5ea47ba1f408b3687d520ce0c2b.css"><meta property='og:title' content="关于MCP和SKILLS的一些看法">
-<meta property='og:description' content="关于MCP和SKILLS的一些看法\r由 LiangYu 的 Hugo Manager 编写并一键推送到 GitHub 上\n">
+<meta property='og:description' content="关于 MCP 和 SKILLS 的一些看法\r前言\r众所周知，anthropic搞出了两套很有意思的协议：MCP 和 SKILLS\n一句话概括\rMCP 像 API，SKILLS 像说明书。\n它们作用相近，但一个是 精确定义，一个是 灵活范化。\nMCP：机器优先的“精确接口”\rMCP（Model Context Protocol）说白了就是 给 AI 用的 API。\n和你平时调用的天气 API 没啥两样——唯一区别是：调用方式被写进了提示词，告诉 AI “你可以这么用”。\n工作流程\r开发者定义好工具/接口 通过提示词注入，告知 LLM 调用规范 LLM 按约定格式（如 JSON）返回调用请求 外部执行并返回结果 举个栗子\r你想让 AI 调用一个天气 API：\n传统 API 调用是这样的 curl &ldquo;https://api.weather.com/today?city=beijing\"\n// MCP 方式：AI 返回特定格式（其实就是规定好LLM要返回啥） 我举个例子哈 这是你的prompt： 你好，你是个聊天机器人，我给你开放了一个tool，天气tool，如果你需要调用，则以json格式返回以下内容 其中city为城市名 { &ldquo;tool_call&rdquo;: &ldquo;weather_api&rdquo;, &ldquo;parameters&rdquo;: { &ldquo;city&rdquo;: &ldquo;XXX&rdquo; } } 然后AI就能自由的 “调用” TOOL了（其实就是返回一段指定格式的文本，然后你写个解析器去解析，然后联网操作什么的）\n">
 <meta property='og:url' content='https://404not.work/posts/%E5%85%B3%E4%BA%8Emcp%E5%92%8Cskills%E7%9A%84%E4%B8%80%E4%BA%9B%E7%9C%8B%E6%B3%95/'>
 <meta property='og:site_name' content='LiangYu Blog'>
 <meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='技术' /><meta property='article:published_time' content='2026-04-13T12:05:18&#43;08:00'/><meta property='article:modified_time' content='2026-04-13T12:05:18&#43;08:00'/>
 <meta name="twitter:title" content="关于MCP和SKILLS的一些看法">
-<meta name="twitter:description" content="关于MCP和SKILLS的一些看法\r由 LiangYu 的 Hugo Manager 编写并一键推送到 GitHub 上\n">
+<meta name="twitter:description" content="关于 MCP 和 SKILLS 的一些看法\r前言\r众所周知，anthropic搞出了两套很有意思的协议：MCP 和 SKILLS\n一句话概括\rMCP 像 API，SKILLS 像说明书。\n它们作用相近，但一个是 精确定义，一个是 灵活范化。\nMCP：机器优先的“精确接口”\rMCP（Model Context Protocol）说白了就是 给 AI 用的 API。\n和你平时调用的天气 API 没啥两样——唯一区别是：调用方式被写进了提示词，告诉 AI “你可以这么用”。\n工作流程\r开发者定义好工具/接口 通过提示词注入，告知 LLM 调用规范 LLM 按约定格式（如 JSON）返回调用请求 外部执行并返回结果 举个栗子\r你想让 AI 调用一个天气 API：\n传统 API 调用是这样的 curl &ldquo;https://api.weather.com/today?city=beijing\"\n// MCP 方式：AI 返回特定格式（其实就是规定好LLM要返回啥） 我举个例子哈 这是你的prompt： 你好，你是个聊天机器人，我给你开放了一个tool，天气tool，如果你需要调用，则以json格式返回以下内容 其中city为城市名 { &ldquo;tool_call&rdquo;: &ldquo;weather_api&rdquo;, &ldquo;parameters&rdquo;: { &ldquo;city&rdquo;: &ldquo;XXX&rdquo; } } 然后AI就能自由的 “调用” TOOL了（其实就是返回一段指定格式的文本，然后你写个解析器去解析，然后联网操作什么的）\n">
       <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
       <script>
         var doNotTrack = false;
@@ -217,8 +217,164 @@
     <section class="article-content">
     
     
-    <h1 id="关于mcp和skills的一些看法">关于MCP和SKILLS的一些看法
-</h1><hr>
+    <h1 id="关于-mcp-和-skills-的一些看法">关于 MCP 和 SKILLS 的一些看法
+</h1><h2 id="前言">前言
+</h2><p>众所周知，anthropic搞出了两套很有意思的协议：<strong>MCP</strong> 和 <strong>SKILLS</strong></p>
+<hr>
+<h2 id="一句话概括">一句话概括
+</h2><blockquote>
+<p><strong>MCP 像 API，SKILLS 像说明书。</strong></p>
+</blockquote>
+<p>它们作用相近，但一个是 <strong>精确定义</strong>，一个是 <strong>灵活范化</strong>。</p>
+<hr>
+<h2 id="mcp机器优先的精确接口">MCP：机器优先的“精确接口”
+</h2><p>MCP（Model Context Protocol）说白了就是 <strong>给 AI 用的 API</strong>。</p>
+<p>和你平时调用的天气 API 没啥两样——唯一区别是：调用方式被写进了提示词，告诉 AI “你可以这么用”。</p>
+<h3 id="工作流程">工作流程
+</h3><ol>
+<li>开发者定义好工具/接口</li>
+<li>通过提示词注入，告知 LLM 调用规范</li>
+<li>LLM 按约定格式（如 JSON）返回调用请求</li>
+<li>外部执行并返回结果</li>
+</ol>
+<h3 id="举个栗子">举个栗子
+</h3><p>你想让 AI 调用一个天气 API：</p>
+<p>传统 API 调用是这样的
+curl &ldquo;<a class="link" href="https://api.weather.com/today?city=beijing%22"  target="_blank" rel="noopener"
+    >https://api.weather.com/today?city=beijing"</a></p>
+<p>// MCP 方式：AI 返回特定格式（其实就是规定好LLM要返回啥）
+我举个例子哈
+这是你的prompt：
+你好，你是个聊天机器人，我给你开放了一个tool，天气tool，如果你需要调用，则以json格式返回以下内容 其中city为城市名
+{
+&ldquo;tool_call&rdquo;: &ldquo;weather_api&rdquo;,
+&ldquo;parameters&rdquo;: {
+&ldquo;city&rdquo;: &ldquo;XXX&rdquo;
+}
+}
+然后AI就能自由的 “调用” TOOL了（其实就是返回一段指定格式的文本，然后你写个解析器去解析，然后联网操作什么的）</p>
+<p>特点：</p>
+<ul>
+<li>格式固定（如 JSON Schema）</li>
+<li>机器可解析</li>
+<li>适合结构化工具调用</li>
+<li>像“遥控器”——按哪个键就执行哪个功能</li>
+</ul>
+<hr>
+<h2 id="skills人类优先的操作手册">SKILLS：人类优先的“操作手册”
+</h2><p>SKILLS 则完全不同—它更像一本 使用说明书。</p>
+<p>里面不写死格式，而是用 大白话 告诉 AI：</p>
+<p>“想查天气？你先看看用户问的是哪个城市，然后去这个网址，把城市名拼在链接后面，拿到结果后再整理成中文回复……”</p>
+<h3 id="举个栗子-1">举个栗子
+</h3><p>【SKILL：天气查询】</p>
+<p>当用户询问天气时，你应该：</p>
+<ol>
+<li>识别城市名称（中文或拼音均可）</li>
+<li>访问 <a class="link" href="https://api.weather.com/v1/%7bcity%7d"  target="_blank" rel="noopener"
+    >https://api.weather.com/v1/{city}</a></li>
+<li>从返回的 JSON 中提取 temperature 和 condition</li>
+<li>用友好的语气告诉用户，例如：“北京今天晴天，25°C，适合出门~”</li>
+</ol>
+<p>如果用户没提城市，主动询问。</p>
+<p>特点：</p>
+<ul>
+<li>自然语言描述</li>
+<li>包含策略、步骤、异常处理</li>
+<li>AI 自己理解并执行</li>
+<li>像“教人做事”——学会后灵活应变</li>
+</ul>
+<hr>
+<h2 id="对比总结">对比总结
+</h2><div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>维度</th>
+          <th>MCP</th>
+          <th>SKILLS</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>本质</td>
+          <td>结构化 API</td>
+          <td>自然语言手册</td>
+      </tr>
+      <tr>
+          <td>适用场景</td>
+          <td>精确工具调用</td>
+          <td>复杂流程指导</td>
+      </tr>
+      <tr>
+          <td>灵活性</td>
+          <td>低（格式固定）</td>
+          <td>高（AI 自行理解）</td>
+      </tr>
+      <tr>
+          <td>开发成本</td>
+          <td>中（需定义 schema）</td>
+          <td>低（写清楚即可）</td>
+      </tr>
+      <tr>
+          <td>可维护性</td>
+          <td>高（机器校验）</td>
+          <td>中（依赖 LLM 理解）</td>
+      </tr>
+      <tr>
+          <td>典型例子</td>
+          <td>计算器、数据库查询</td>
+          <td>网页操作、多步推理</td>
+      </tr>
+  </tbody>
+</table></div>
+<hr>
+<h2 id="实际场景怎么选">实际场景怎么选？
+</h2><h3 id="用-mcp-的场景">用 MCP 的场景
+</h3><ul>
+<li>调用明确的外部 API（查天气、发邮件、查数据库）</li>
+<li>需要稳定格式输出（如 JSON 给下游系统）</li>
+<li>工具数量多，需要统一管理</li>
+<li>对准确性要求极高（如金融交易）</li>
+</ul>
+<h3 id="用-skills-的场景">用 SKILLS 的场景
+</h3><ul>
+<li>复杂业务流程（如“帮我订个餐厅，如果满员就换一家”）</li>
+<li>需要 AI 自主判断和调整</li>
+<li>快速原型验证</li>
+<li>不想写代码，只想用文字描述</li>
+</ul>
+<hr>
+<h2 id="一点个人看法">一点个人看法
+</h2><p>MCP 和 SKILLS 不是互斥的，甚至可以 组合使用：</p>
+<p>用 SKILLS 做顶层规划，用 MCP 执行底层原子操作。</p>
+<p>比如：</p>
+<ul>
+<li>SKILLS 说：“用户想订机票，你先查一下北京到上海明天有没有航班”</li>
+<li>底层调用 MCP 的 search_flights 工具</li>
+<li>SKILLS 接着说：“有的话，挑最便宜的那班，然后用 MCP 的 book_flight 订掉”</li>
+</ul>
+<p>分工明确：</p>
+<ul>
+<li>SKILLS 负责“怎么想”</li>
+<li>MCP 负责“怎么做”</li>
+</ul>
+<hr>
+<h2 id="最后">最后
+</h2><p>目前 MCP 和 SKILLS 都还在快速演进，Anthropic 的思路其实很清晰：</p>
+<p>给开发者留精确接口，给 AI 留思考空间。</p>
+<p>两者结合，才是未来 AI Agent 的正确打开方式。</p>
+<p>附：当anthropic没有提出MCP时，我们如何使用ai进行辅助逆向belike</p>
+<p><img src="/uploads/posts/%e5%85%b3%e4%ba%8eMCP%e5%92%8cSKILLS%e7%9a%84%e4%b8%80%e4%ba%9b%e7%9c%8b%e6%b3%95/20260418-183246.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="关于MCP和SKILLS的一些看法"
+	
+	
+></p>
+<p>20260418</p>
+<hr>
 <p>由 LiangYu 的 Hugo Manager 编写并一键推送到 GitHub 上</p>
 
 </section>
