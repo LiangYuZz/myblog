@@ -145,7 +145,7 @@ MCP 和 SKILLS 不是互斥的，甚至可以 组合使用：
 
 两者结合，才是未来 AI Agent 的正确打开方式。
 
-附：当anthropic没有提出MCP时，我们如何使用ai进行辅助逆向belike
+附：在anthropic没有提出MCP时，我们如何使用ai进行辅助逆向belike
 
 ![关于MCP和SKILLS的一些看法](/uploads/posts/关于MCP和SKILLS的一些看法/20260418-183246.png)
 
