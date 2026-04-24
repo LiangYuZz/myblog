@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>吐槽 on LiangYu Blog</title>
+        <link>https://404not.work/tags/%E5%90%90%E6%A7%BD/</link>
+        <description>Recent content in 吐槽 on LiangYu Blog</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh-cn</language>
+        <lastBuildDate>Fri, 24 Apr 2026 16:30:10 +0800</lastBuildDate><atom:link href="https://404not.work/tags/%E5%90%90%E6%A7%BD/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>吐槽清华最屎山的产品没有之一之autoglm与autoclaw</title>
+        <link>https://404not.work/posts/%E5%90%90%E6%A7%BD%E6%B8%85%E5%8D%8E%E6%9C%80%E5%B1%8E%E5%B1%B1%E7%9A%84%E4%BA%A7%E5%93%81%E6%B2%A1%E6%9C%89%E4%B9%8B%E4%B8%80%E4%B9%8Bautoglm%E4%B8%8Eautoclaw/</link>
+        <pubDate>Fri, 24 Apr 2026 16:30:10 +0800</pubDate>
+        
+        <guid>https://404not.work/posts/%E5%90%90%E6%A7%BD%E6%B8%85%E5%8D%8E%E6%9C%80%E5%B1%8E%E5%B1%B1%E7%9A%84%E4%BA%A7%E5%93%81%E6%B2%A1%E6%9C%89%E4%B9%8B%E4%B8%80%E4%B9%8Bautoglm%E4%B8%8Eautoclaw/</guid>
+        <description>&lt;h1 id=&#34;吐槽清华最屎山的产品没有之一之autoglm与autoclaw&#34;&gt;吐槽清华最屎山的产品没有之一之AutoGLM与AutoClaw
+&lt;/h1&gt;&lt;p&gt;======================================================================&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://404not.work/uploads/posts/%e5%90%90%e6%a7%bd%e6%b8%85%e5%8d%8e%e6%9c%80%e5%b1%8e%e5%b1%b1%e7%9a%84%e4%ba%a7%e5%93%81%e6%b2%a1%e6%9c%89%e4%b9%8b%e4%b8%80%e4%b9%8bautoglm%e4%b8%8eautoclaw/20260424-163015.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;吐槽清华最屎山的产品没有之一之autoglm与autoclaw&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;======================================================================&lt;/p&gt;
+&lt;h2 id=&#34;一简直就是屎山之屎王&#34;&gt;一、简直就是屎山之屎王
+&lt;/h2&gt;&lt;p&gt;自身工具链混乱到离谱，毫无规范可言：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;时而用浏览器插件接管全部操作，逻辑割裂&lt;/li&gt;
+&lt;li&gt;时而又切换成playwright，两种方式混用，体验断层
+真不知道设计团队是怎么想的，纯纯人才操作。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;二autoclaw蹭热度增本降效的废柴产品&#34;&gt;二、AutoClaw：蹭热度+增本降效的废柴产品
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;核心就是蹭OpenClaw的噱头，本身毫无创新&lt;/li&gt;
+&lt;li&gt;魔改原有功能，越改越烂，代码臃肿到极致&lt;/li&gt;
+&lt;li&gt;无脑消耗Token，不仅增加使用成本，还大幅降低运行效率
+属于是画蛇添足，越改越屎。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;三反人类设计大赏多图预警&#34;&gt;三、反人类设计大赏（多图预警）
+&lt;/h2&gt;&lt;p&gt;初次下载打开，直接被震惊到：默认强制启用66个skill！
+没有任何精简，没有任何提示，纯纯浪费资源。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://404not.work/uploads/posts/%e5%90%90%e6%a7%bd%e6%b8%85%e5%8d%8e%e6%9c%80%e5%b1%8e%e5%b1%b1%e7%9a%84%e4%ba%a7%e5%93%81%e6%b2%a1%e6%9c%89%e4%b9%8b%e4%b8%80%e4%b9%8bautoglm%e4%b8%8eautoclaw/20260424-163253.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;吐槽清华最屎山的产品没有之一之autoglm与autoclaw&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;更离谱的是：
+不支持批量禁用技能
+没有搜索筛选功能
+只能手动一个一个去关闭，交互设计反人类到极致，就算让豆包改，也改不出这么烂的玩意。&lt;/p&gt;
+&lt;p&gt;还有所谓的“流式输出”：
+一大坨内容一次性堆砌，毫无拆分，毫无逻辑，也敢叫流式输出？直接气笑了。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://404not.work/uploads/posts/%e5%90%90%e6%a7%bd%e6%b8%85%e5%8d%8e%e6%9c%80%e5%b1%8e%e5%b1%b1%e7%9a%84%e4%ba%a7%e5%93%81%e6%b2%a1%e6%9c%89%e4%b9%8b%e4%b8%80%e4%b9%8bautoglm%e4%b8%8eautoclaw/20260424-163346.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;吐槽清华最屎山的产品没有之一之autoglm与autoclaw&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;======================================================================
+最后吐槽：
+要不是计算机设计大赛必须用这个破玩意，我这辈子都不想碰，纯纯骗经费的敷衍产品。&lt;/p&gt;
+&lt;p&gt;⚠️ 本文纯攻击性，无客观，全程情绪化吐槽，不接受反驳 ⚠️&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;由 LiangYu 的 Hugo Manager 编写并一键推送到 GitHub 上&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>
