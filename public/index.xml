@@ -6,7 +6,65 @@
         <description>Recent content on LiangYu Blog</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
-        <lastBuildDate>Fri, 24 Apr 2026 16:30:10 +0800</lastBuildDate><atom:link href="https://404not.work/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sat, 16 May 2026 18:39:45 +0800</lastBuildDate><atom:link href="https://404not.work/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>20260516总结</title>
+        <link>https://404not.work/posts/20260516%E6%80%BB%E7%BB%93/</link>
+        <pubDate>Sat, 16 May 2026 18:39:45 +0800</pubDate>
+        
+        <guid>https://404not.work/posts/20260516%E6%80%BB%E7%BB%93/</guid>
+        <description>&lt;h1 id=&#34;20260516总结&#34;&gt;20260516总结
+&lt;/h1&gt;&lt;h1 id=&#34;1通过二次逆向修复古董老项目实现0人监控自动学习通签到--扫码一机多签&#34;&gt;**1.通过二次逆向，修复古董老项目，实现0人监控自动学习通签到 + 扫码一机多签
+&lt;/h1&gt;&lt;h1 id=&#34;heading&#34;&gt;**
+&lt;/h1&gt;&lt;p&gt;&lt;img src=&#34;https://404not.work/uploads/posts/20260516%e6%80%bb%e7%bb%93/20260516-184053.jpg&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;20260516总结&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h1 id=&#34;2通过逆向实现了微信增强美化防撤回等基础功能&#34;&gt;&lt;strong&gt;2.通过逆向，实现了微信增强+美化，防撤回等基础功能&lt;/strong&gt;
+&lt;/h1&gt;&lt;p&gt;&lt;img src=&#34;https://404not.work/uploads/posts/20260516%e6%80%bb%e7%bb%93/20260516-184105.jpg&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;20260516总结&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://404not.work/uploads/posts/20260516%e6%80%bb%e7%bb%93/20260516-184111.jpg&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;20260516总结&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h1 id=&#34;3通过逆向实现了codex注册机api中转极低成本调用gpt家最强模型gpt55&#34;&gt;**3.通过逆向，实现了CODEX注册机+API中转，极低成本调用GPT家最强模型GPT5.5
+&lt;/h1&gt;&lt;h1 id=&#34;heading-1&#34;&gt;**
+&lt;/h1&gt;&lt;h1 id=&#34;4通过魔改实现了d1ckcode类claude-code产物用于辅助ai-agent编程目前我本人也在用结合成果3去使用优点是有个逆向模式通过prompt-hijack去让他忘记自我帮我干任何事支持openai-anthropic多种协议模式&#34;&gt;**4.通过魔改实现了D1ckCode（类claude code产物），用于辅助AI Agent编程，目前我本人也在用，结合成果3去使用。优点是有个逆向模式，通过prompt hijack去让他忘记自我，帮我干任何事。支持OpenAI Anthropic多种协议模式。
+&lt;/h1&gt;&lt;h1 id=&#34;heading-2&#34;&gt;**
+&lt;/h1&gt;&lt;p&gt;&lt;img src=&#34;https://404not.work/uploads/posts/20260516%e6%80%bb%e7%bb%93/20260516-184417.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;20260516总结&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;由 LiangYu 的 Hugo Manager 编写并一键推送到 GitHub 上&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>吐槽清华最屎山的产品没有之一之autoglm与autoclaw</title>
         <link>https://404not.work/posts/%E5%90%90%E6%A7%BD%E6%B8%85%E5%8D%8E%E6%9C%80%E5%B1%8E%E5%B1%B1%E7%9A%84%E4%BA%A7%E5%93%81%E6%B2%A1%E6%9C%89%E4%B9%8B%E4%B8%80%E4%B9%8Bautoglm%E4%B8%8Eautoclaw/</link>
         <pubDate>Fri, 24 Apr 2026 16:30:10 +0800</pubDate>
