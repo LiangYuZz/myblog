@@ -60,6 +60,48 @@
 	
 	
 &gt;&lt;/p&gt;
+&lt;h1 id=&#34;将来方向&#34;&gt;将来方向
+&lt;/h1&gt;&lt;h3 id=&#34;捣鼓了谷歌发的关于js混淆的论文感觉其实思路也就一般其实就是脚本小子各种调用工具然后扔个gemini去分析没啥创新点也不知道是谷歌哪个子团队来凑数的将来一星期准备捣鼓关于js的解混淆方案&#34;&gt;&lt;strong&gt;捣鼓了谷歌发的关于JS混淆的论文（感觉其实思路也就一般），其实就是脚本小子，各种调用工具，然后扔个GEMINI去分析。没啥创新点，也不知道是谷歌哪个子团队来凑数的。将来一星期准备捣鼓关于JS的解混淆方案&lt;/strong&gt;
+&lt;/h3&gt;&lt;p&gt;我已经完整读完这篇Google 2026 年 ICSE 论文《CASCADE: LLM-powered JavaScript Deobfuscator》，下面给你一份极简、清晰、可直接用的核心总结，覆盖所有关键信息。
+一、论文核心一句话
+CASCADE 是Google 生产环境在用、把 Gemini 大模型 + JSIR 编译器中间表示 结合的 JavaScript 代码反混淆工具，专门搞定 Obfuscator.IO 的字符串混淆，准确率极高、不用硬编码规则。
+二、解决什么问题
+JavaScript 混淆（尤其 Obfuscator.IO）严重阻碍恶意代码检测、静态分析、逆向
+传统反混淆：
+规则 / 正则 / AST：极易被微小改动破解、维护成本爆炸
+纯 LLM：会幻觉、算错、无法保证语义等价
+目标：恢复字符串 + API 名，保证语义不变、代码可读
+三、CASCADE hybrid 架构（最关键）
+LLM 做理解 → JSIR 做确定性变换 → 沙箱动态执行
+Gemini 识别 prelude 函数（3 类模板）
+字符串数组函数
+字符串获取函数
+字符串旋转函数
+沙箱安全执行 prelude，拿到真实字符串
+JSIR 做常量传播 + 内联，还原代码、保证语义等价
+四、核心技术亮点
+不用硬编码规则
+干掉 WebCrack 等工具几百上千行脆弱规则
+LLM 只做模式识别，不生成代码
+彻底避免幻觉、计算错误
+JSIR 比 AST 更强
+支持数据流分析、语义级变换，稳定性远超 AST
+工业级可用
+已在 Google 生产环境部署，日处理百万级 JS 文件
+五、实验效果（数据直接抄论文）
+Prelude 检测准确率：99.56%
+反混淆成功率：98.93%
+平均每个文件恢复 945 个字符串
+平均耗时 2.3 秒
+支持 Obfuscator.IO 全等级（default/low/medium/high）
+六、论文 3 大贡献
+首个 LLM + 编译器 IR 混合反混淆框架
+已工业部署，替代大量脆弱规则
+开源 prompt 模板 + JSIR 基础设施
+七、关键结论（论文原话）
+纯 LLM 不能做生产级反混淆，必须 + 编译器
+混合架构：LLM 负责理解，IR 负责正确性
+CASCADE 是 Google 恶意 JS 检测的关键基础设施&lt;/p&gt;
 &lt;hr&gt;
 &lt;p&gt;由 LiangYu 的 Hugo Manager 编写并一键推送到 GitHub 上&lt;/p&gt;
 </description>
